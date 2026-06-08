@@ -37,7 +37,7 @@ const About: React.FC = () => {
   };
 
   return (
-    <section id="about" ref={containerRef} className="py-32 px-6 md:px-24 bg-[#0B0D10] relative z-20 overflow-hidden">
+    <section id="about" ref={containerRef} className="py-32 px-6 md:px-24 bg-[#0B0D10] relative z-20 overflow-hidden" aria-label="About Pratyush Jaiswal">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
 
         {/* Image Side - Pronounced Parallax */}
@@ -45,8 +45,11 @@ const About: React.FC = () => {
           <motion.div style={{ scale, y }} className="absolute inset-0 w-full h-[120%] -top-[10%]">
             <img
               src="https://picsum.photos/800/1000?grayscale"
-              alt="Abstract Design"
+              alt="Pratyush Jaiswal — Computer Science student and software developer at RVITM Bangalore"
               className="w-full h-full object-cover opacity-60"
+              loading="lazy"
+              width="800"
+              height="1000"
             />
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D10] to-transparent opacity-60"></div>
@@ -63,7 +66,7 @@ const About: React.FC = () => {
             variants={itemVariants}
             className="text-[#94A3B8] font-bold uppercase tracking-widest text-sm mb-6 block"
           >
-            About Me
+            About Pratyush Jaiswal
           </motion.span>
 
           <motion.h2
@@ -75,13 +78,13 @@ const About: React.FC = () => {
 
           <div className="space-y-6 text-[#9AA0B2] text-lg leading-relaxed">
             <motion.p variants={itemVariants}>
-              I'm a Computer Science student at R V Institute of Technology and Management (2025-2029), driven by genuine curiosity about how software shapes the world.
+              Pratyush Jaiswal is a Computer Science student at R V Institute of Technology and Management, Bangalore (2025–2029), driven by genuine curiosity about how software shapes the world.
             </motion.p>
             <motion.p variants={itemVariants}>
-              From data structures and algorithms to full-stack web development, I enjoy diving deep into problems and coming out with solutions that actually work. I build with React, TypeScript, Python, and whatever else the problem demands.
+              From data structures and algorithms to full-stack web development, Pratyush enjoys diving deep into problems and coming out with solutions that actually work — using React, TypeScript, Python, and Supabase.
             </motion.p>
             <motion.p variants={itemVariants}>
-              When I'm not coding, I'm exploring new frameworks, contributing to open-source projects, or finding better ways to learn and share knowledge.
+              When not coding, Pratyush is exploring new frameworks, contributing to open-source projects, or finding better ways to learn and share knowledge.
             </motion.p>
           </div>
 

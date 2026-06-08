@@ -253,7 +253,7 @@ const GridNodes = ({ count, size, dimensions }: { count: number, size: number, d
   );
 }
 
-const SystemNode = ({ x, y, delay }: { x: number, y: number, delay: number }) => {
+const SystemNode: React.FC<{ x: number, y: number, delay: number }> = ({ x, y, delay }) => {
     return (
         <motion.div
           className="absolute w-1.5 h-1.5 rounded-full bg-[#EAEAF0]" 
@@ -330,16 +330,21 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
         <span className="text-xs font-mono text-[#94A3B8] tracking-[0.2em] uppercase">Building & Learning Every Day</span>
       </motion.div>
 
-      {/* Name & Role */}
+      {/* Name & Role — H1 is the single most important on-page SEO element */}
       <div className="mb-6">
-        <div 
+        <h1
           className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-[#EAEAF0] leading-[1] mb-2 cursor-none origin-left relative whitespace-nowrap"
           data-cursor="hero-text"
+          aria-label="Pratyush Jaiswal"
           onMouseEnter={() => onNameHoverChange(true)}
           onMouseLeave={() => onNameHoverChange(false)}
         >
-          <DecryptedText text="Pratyush Jaiswal" />
-        </div>
+          {/* sr-only text ensures Google indexes the real name, not scrambled chars */}
+          <span className="sr-only">Pratyush Jaiswal</span>
+          <span aria-hidden="true">
+            <DecryptedText text="Pratyush Jaiswal" />
+          </span>
+        </h1>
         <motion.div 
           variants={roleAnim} 
           className="text-3xl md:text-5xl lg:text-6xl flex flex-wrap items-baseline cursor-none"

@@ -5,20 +5,20 @@ import { Linkedin, Mail, Phone, Github } from 'lucide-react';
 
 const Contact: React.FC = () => {
   return (
-    <section id="contact" className="py-32 px-6 md:px-24 bg-[#0B0D10] relative z-20 overflow-hidden">
+    <section id="contact" className="py-32 px-6 md:px-24 bg-[#0B0D10] relative z-20 overflow-hidden" aria-label="Contact Pratyush Jaiswal">
 
       {/* Background Decor */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#94A3B8]/5 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div className="max-w-4xl mx-auto text-center relative z-10">
-        <motion.h2
+          <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
           className="text-5xl md:text-7xl font-bold text-[#EAEAF0] mb-8"
         >
-          Let's work together.
+          Let's work <span className="text-[#94A3B8]">together</span>.
         </motion.h2>
 
         <p className="text-[#9AA0B2] text-xl mb-12">

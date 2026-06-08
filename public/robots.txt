@@ -1,0 +1,15 @@
+# robots.txt for Pratyush Jaiswal Portfolio
+# https://pratyushjaiswal.vercel.app/
+
+# Allow all crawlers full access
+User-agent: *
+Allow: /
+
+# Block common non-content paths (none in SPA, but future-proof)
+Disallow: /api/
+
+# Sitemap location — critical for Google to find all pages
+Sitemap: https://pratyushjaiswal.vercel.app/sitemap.xml
+
+# Crawl-delay for courtesy (optional, Googlebot ignores but others respect)
+# Crawl-delay: 10

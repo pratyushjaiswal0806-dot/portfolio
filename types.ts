@@ -9,6 +9,8 @@ export interface Project {
   year: string;
   details: string[];
   tech: string[];
+  link?: string;
+  nda?: boolean;
 }
 
 export interface Skill {

@@ -2,27 +2,31 @@ import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence, MotionValue } from 'framer-motion';
 import { Project } from '../../types';
 import { X, ArrowRight, ExternalLink } from 'lucide-react';
+import techTokenImage from '../assets/tech-token-heist.png';
+import fancallImage from '../assets/fancall.png';
 
 const projects: Project[] = [
   {
     id: '1',
-    title: 'SolarFit',
-    category: 'Web Development',
-    description: 'A responsive website designed in under 10 hours focusing on clean UI and user-centric design for solar energy solutions.',
-    image: 'https://picsum.photos/800/600?random=1',
+    title: 'Tech Token Heist',
+    category: 'Web Application',
+    description: 'Tech Token Heist is a real-time, gamified matchmaking platform for an inter-college tech competition. Up to 24 teams (2-4 members each) will compete head-to-head in various technical domains. The platform will manage a live token economy, an automated matchmaking queue, a dynamic domain-selection wheel, phase-specific gameplay logic, and a real-time leaderboard using Supabase.',
+    image: techTokenImage,
     year: '2024',
-    details: ['10 Hour Sprint', 'Responsive Layout', 'Lead Generation Focus'],
-    tech: ['React', 'Tailwind', 'Framer Motion']
+    details: ['Real-time Matchmaking', 'Live Token Economy', 'Dynamic Gameplay'],
+    tech: ['React', 'Supabase', 'Real-time'],
+    link: 'https://tech-toke-nheist.vercel.app/'
   },
   {
     id: '2',
-    title: 'Lumina Workflow',
-    category: 'Productivity Tool',
-    description: 'An interface designed to improve user engagement and interaction for workflow management systems.',
-    image: 'https://picsum.photos/800/600?random=2',
-    year: '2023',
-    details: ['Dashboard Design', 'Micro-interactions', 'Dark Mode'],
-    tech: ['Next.js', 'Typescript', 'Chart.js']
+    title: 'Fancall Frontend Development',
+    category: 'Frontend Development',
+    description: 'Converted detailed Figma designs into a production-ready frontend for a celebrity-fan engagement platform. Built reusable and scalable React components following modern frontend development practices. Implemented responsive layouts ensuring consistent user experience across desktop, tablet, and mobile devices. Collaborated with designers and stakeholders to accurately translate UI/UX requirements into functional interfaces. Optimized page performance, accessibility, and responsiveness. Worked closely with backend integration requirements to support seamless user interactions.',
+    image: fancallImage,
+    year: '2024',
+    details: ['Figma to React', 'Responsive Layout', 'Performance Optimization'],
+    tech: ['React', 'TypeScript', 'Tailwind'],
+    nda: true
   },
   {
     id: '3',
@@ -48,13 +52,13 @@ const Projects: React.FC = () => {
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
 
   return (
-    <section id="projects" className="relative bg-[#0B0D10] z-20">
+    <section id="projects" className="relative bg-[#0B0D10] z-20" aria-label="Selected Projects by Pratyush Jaiswal">
       {/* Scroll Trigger Container */}
       <div ref={targetRef} className="h-[300vh] relative">
         <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
 
           <div className="px-6 md:px-24 mb-8">
-            <h2 className="text-4xl md:text-6xl font-bold text-[#EAEAF0]">Selected Works <span className="text-[#94A3B8] text-xl align-top">03</span></h2>
+            <h2 className="text-4xl md:text-6xl font-bold text-[#EAEAF0]">Selected Works by <span className="text-[#94A3B8]">Pratyush Jaiswal</span></h2>
           </div>
 
           <motion.div style={{ x }} className="flex gap-12 px-6 md:px-24 w-max items-center">
@@ -102,7 +106,11 @@ const Projects: React.FC = () => {
                   <motion.img
                     layoutId={`image-${project.id}`}
                     src={project.image}
+                    alt={`${project.title} — project by Pratyush Jaiswal`}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    width="1200"
+                    height="675"
                   />
                   <div className="absolute top-4 right-4 z-20">
                     <button
@@ -126,9 +134,19 @@ const Projects: React.FC = () => {
                       <motion.h3 layoutId={`title-${project.id}`} className="text-4xl md:text-6xl font-bold text-white tracking-tight">{project.title}</motion.h3>
                     </div>
                     <div className="flex gap-2 shrink-0">
-                      <a href="#" className="px-6 py-3 bg-[#EAEAF0] text-[#0B0D10] rounded-full font-medium hover:bg-white transition-colors flex items-center gap-2 text-sm tracking-wide whitespace-nowrap">
-                        Live Demo <ExternalLink size={16} />
-                      </a>
+                      {project.link ? (
+                        <a href={project.link} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-[#EAEAF0] text-[#0B0D10] rounded-full font-medium hover:bg-white transition-colors flex items-center gap-2 text-sm tracking-wide whitespace-nowrap">
+                          Live Demo <ExternalLink size={16} />
+                        </a>
+                      ) : project.nda ? (
+                        <span className="px-6 py-3 bg-[#2D3442] text-[#9AA0B2] rounded-full font-medium flex items-center gap-2 text-sm tracking-wide whitespace-nowrap cursor-not-allowed" title="Link unavailable due to Non-Disclosure Agreement">
+                          Under NDA
+                        </span>
+                      ) : (
+                        <a href="#" className="px-6 py-3 bg-[#EAEAF0] text-[#0B0D10] rounded-full font-medium hover:bg-white transition-colors flex items-center gap-2 text-sm tracking-wide whitespace-nowrap">
+                          Live Demo <ExternalLink size={16} />
+                        </a>
+                      )}
                     </div>
                   </div>
 
@@ -242,8 +260,11 @@ const ProjectCard: React.FC<{
       <motion.img
         layoutId={`image-${project.id}`}
         src={project.image}
-        alt={project.title}
+        alt={`${project.title} — a project by Pratyush Jaiswal | ${project.category}`}
         className="w-full h-full object-cover transition-transform duration-700"
+        loading="lazy"
+        width="800"
+        height="600"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D10] via-transparent to-transparent opacity-90" />
 

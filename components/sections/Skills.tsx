@@ -94,6 +94,7 @@ const Skills: React.FC = () => {
       id="skills"
       ref={containerRef}
       className="py-32 px-6 md:px-24 bg-[#0B0D10] relative z-20 overflow-hidden"
+      aria-label="Skills and Capabilities of Pratyush Jaiswal"
     >
       {/* 8. BACKGROUND GRID & MOUSE SPOTLIGHT */}
       <SkillsGrid isActive={isInView} mouseX={mouseX} mouseY={mouseY} />
@@ -116,7 +117,7 @@ const Skills: React.FC = () => {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
             transition={{ duration: 0.5, delay: 0.12, ease: HOVER_EASE }}
           >
-            More than just <span className="text-[#94A3B8]">a student</span>.
+            More than just <span className="text-[#94A3B8]">a student</span> — a developer.
           </motion.h2>
         </div>
 
@@ -332,7 +333,7 @@ const CornerBrackets = ({ isHovered }: { isHovered: boolean }) => {
   );
 };
 
-const Tag = ({ text, index, isCardHovered }: { text: string, index: number, isCardHovered: boolean }) => {
+const Tag: React.FC<{ text: string, index: number, isCardHovered: boolean }> = ({ text, index, isCardHovered }) => {
   return (
     <motion.span
       initial={{ opacity: 0.6, y: 0 }}

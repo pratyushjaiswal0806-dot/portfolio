@@ -1,0 +1,28 @@
+/* ══════════════════════════════════════════════════════════
+   Pratyush Jaiswal Portfolio — Global Styles
+   ══════════════════════════════════════════════════════════ */
+
+/* Screen-reader only utility — visually hides text but keeps
+   it in the DOM for search engines and assistive technologies.
+   Used on the H1 "Pratyush Jaiswal" so Google reads the real
+   name even though DecryptedText renders scrambled characters. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Scrollbar hide utility (used in modal) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

@@ -3,68 +3,168 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pratyush Jaiswal | CSE Student & Developer</title>
-    <meta name="description" content="Pratyush Jaiswal — Computer Science student at RVITM, passionate about web development, algorithms, and building real-world software." />
-    <meta property="og:title" content="Pratyush Jaiswal | CSE Student & Developer" />
-    <meta property="og:description" content="CSE student who loves building things — from clean interfaces to clever algorithms." />
+
+    <!-- ═══════════════════════════════════════════════
+         PRIMARY SEO: Title & Meta Description
+         Google weighs the <title> heavily for brand queries.
+         "Pratyush Jaiswal" appears first → max keyword weight.
+    ═══════════════════════════════════════════════ -->
+    <title>Pratyush Jaiswal | Software Developer & CS Student Portfolio</title>
+    <meta name="description" content="Pratyush Jaiswal is a Computer Science student at RVITM Bangalore, building full-stack web apps, gamified platforms, and interactive interfaces with React, TypeScript, and Supabase." />
+    <meta name="keywords" content="Pratyush Jaiswal, pratyush jaiswal portfolio, pratyush jaiswal developer, RVITM, software developer, web developer, React developer, full stack developer, Bangalore" />
+    <meta name="author" content="Pratyush Jaiswal" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+    <!-- ═══════════════════════════════════════════════
+         CANONICAL URL — prevents duplicate content penalty.
+         Update this to your live Vercel domain.
+    ═══════════════════════════════════════════════ -->
+    <link rel="canonical" href="https://pratyushjaiswal.vercel.app/" />
+
+    <!-- ═══════════════════════════════════════════════
+         OPEN GRAPH — controls how link appears on LinkedIn,
+         WhatsApp, Facebook etc. (social signals help rankings)
+    ═══════════════════════════════════════════════ -->
     <meta property="og:type" content="website" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta property="og:url" content="https://pratyushjaiswal.vercel.app/" />
+    <meta property="og:title" content="Pratyush Jaiswal | Software Developer & CS Student Portfolio" />
+    <meta property="og:description" content="Pratyush Jaiswal — CS student at RVITM Bangalore, building full-stack web apps and gamified platforms with React, TypeScript, and Supabase." />
+    <meta property="og:image" content="https://pratyushjaiswal.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Pratyush Jaiswal – Software Developer Portfolio" />
+    <meta property="og:site_name" content="Pratyush Jaiswal Portfolio" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- ═══════════════════════════════════════════════
+         TWITTER / X CARDS — rich preview on Twitter/X
+    ═══════════════════════════════════════════════ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@pratyushjaiswal" />
+    <meta name="twitter:creator" content="@pratyushjaiswal" />
+    <meta name="twitter:title" content="Pratyush Jaiswal | Software Developer & CS Student Portfolio" />
+    <meta name="twitter:description" content="Pratyush Jaiswal — CS student at RVITM Bangalore, building full-stack web apps and gamified platforms." />
+    <meta name="twitter:image" content="https://pratyushjaiswal.vercel.app/og-image.png" />
+    <meta name="twitter:image:alt" content="Pratyush Jaiswal – Software Developer Portfolio" />
+
+    <!-- ═══════════════════════════════════════════════
+         JSON-LD STRUCTURED DATA (Person Schema)
+         This generates a Knowledge Panel on Google and
+         enables rich results for name searches.
+    ═══════════════════════════════════════════════ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Pratyush Jaiswal",
+      "givenName": "Pratyush",
+      "familyName": "Jaiswal",
+      "jobTitle": "Software Developer",
+      "description": "Computer Science student at RVITM Bangalore. Building full-stack web applications, gamified platforms, and interactive interfaces with React, TypeScript, and Supabase.",
+      "url": "https://pratyushjaiswal.vercel.app/",
+      "image": "https://pratyushjaiswal.vercel.app/og-image.png",
+      "email": "pratyushjaiswal0806@gmail.com",
+      "telephone": "+918770953990",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Bangalore",
+        "addressRegion": "Karnataka",
+        "addressCountry": "IN"
+      },
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "R V Institute of Technology and Management",
+        "alternateName": "RVITM",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Bangalore",
+          "addressRegion": "Karnataka",
+          "addressCountry": "IN"
+        }
+      },
+      "knowsAbout": [
+        "Web Development",
+        "React.js",
+        "TypeScript",
+        "Next.js",
+        "Python",
+        "Data Structures and Algorithms",
+        "Full Stack Development",
+        "Supabase",
+        "UI/UX Design",
+        "Framer Motion"
+      ],
+      "sameAs": [
+        "https://github.com/pratyushjaiswal0806",
+        "https://www.linkedin.com/in/pratyush-jaiswal-ba0b6926a"
+      ],
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://pratyushjaiswal.vercel.app/"
+      }
+    }
+    </script>
+
+    <!-- ═══════════════════════════════════════════════
+         PERFORMANCE: Preconnect critical origins to
+         reduce LCP (Largest Contentful Paint)
+    ═══════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://esm.sh" />
+
+    <!-- ═══════════════════════════════════════════════
+         FONTS — display=swap prevents FOIT (Flash of
+         Invisible Text), improving CLS score
+    ═══════════════════════════════════════════════ -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- ═══════════════════════════════════════════════
+         FAVICON & THEME
+    ═══════════════════════════════════════════════ -->
+    <meta name="theme-color" content="#0B0D10" />
+
     <style>
       body {
         background-color: #0B0D10;
         color: #EAEAF0;
-        cursor: none; /* Hide default cursor for custom one */
+        cursor: none;
         font-family: 'DM Sans', sans-serif;
         overflow-x: hidden;
       }
       h1, h2, h3, h4, h5, h6 {
         font-family: 'Space Grotesk', sans-serif;
       }
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0B0D10;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #141821;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #94A3B8;
-      }
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #0B0D10; }
+      ::-webkit-scrollbar-thumb { background: #141821; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
       .grain {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 50;
-        opacity: 0.04;
+        position: fixed; top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none; z-index: 50; opacity: 0.04;
         background-image: url("https://grainy-gradients.vercel.app/noise.svg");
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "lucide-react": "https://esm.sh/lucide-react@^0.561.0"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="importmap">
+    {
+      "imports": {
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react": "https://esm.sh/react@^19.2.3",
+        "lucide-react": "https://esm.sh/lucide-react@^0.561.0"
+      }
+    }
+    </script>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
   <body>
-    <div id="root"></div>
-    <div class="grain"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <!-- Semantic landmark for screen readers & crawlers -->
+    <div id="root" role="main" aria-label="Pratyush Jaiswal Portfolio"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>

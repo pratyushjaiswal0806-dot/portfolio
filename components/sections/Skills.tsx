@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform, useInView, cubicBezier, useMotionValue, useMotionTemplate, useSpring } from 'framer-motion';
 import { Code2, Layout, Zap, Activity, Terminal, Grid3x3 } from 'lucide-react';
+import { PREMIUM_EASE } from '../ui/motion';
 
 // --- Motion Constants ---
 const BOOT_EASING = cubicBezier(0.22, 1, 0.36, 1);
@@ -159,7 +160,7 @@ const BentoCard = ({ item, index, hoveredIndex, setHoveredIndex, isSectionActive
 
   // 6. FOCUS MANAGEMENT
   const finalOpacity = useTransform(depthOpacity, (v) => v * (isDimmed ? 0.9 : 1));
-  const finalScale = useTransform(depthScale, (v) => isHovered ? v * 1.01 : v);
+  const finalScale = useTransform(depthScale, (v) => isHovered ? v * 1.02 : v);
 
   // --- 3D TILT LOGIC ---
   const x = useMotionValue(0);
@@ -167,20 +168,25 @@ const BentoCard = ({ item, index, hoveredIndex, setHoveredIndex, isSectionActive
   const mouseXSpring = useSpring(x, { stiffness: 150, damping: 15 });
   const mouseYSpring = useSpring(y, { stiffness: 150, damping: 15 });
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isMobile) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    const mouseXVal = e.clientX - rect.left;
+    const mouseYVal = e.clientY - rect.top;
 
-    // Calculate percentage from center (-0.5 to 0.5)
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
+    // Track mouse coordinates directly in styling properties for CSS glow
+    if (cardRef.current) {
+      cardRef.current.style.setProperty('--mouse-x', `${mouseXVal}px`);
+      cardRef.current.style.setProperty('--mouse-y', `${mouseYVal}px`);
+    }
+
+    const xPct = mouseXVal / width - 0.5;
+    const yPct = mouseYVal / height - 0.5;
 
     x.set(xPct);
     y.set(yPct);
@@ -200,23 +206,24 @@ const BentoCard = ({ item, index, hoveredIndex, setHoveredIndex, isSectionActive
       initial="hidden"
       animate={isSectionActive ? "visible" : "exit"}
       variants={{
-        hidden: { opacity: 0, y: 20, filter: 'blur(8px)' },
+        hidden: { opacity: 0, y: 30, scale: 0.95, filter: 'blur(4px)' },
         visible: {
           opacity: 1,
           y: 0,
+          scale: 1,
           filter: 'blur(0px)',
           transition: {
-            duration: 0.5,
-            delay: index * 0.08,
+            duration: 0.6,
+            delay: index * 0.06,
             ease: BOOT_EASING
           }
         },
-        exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
+        exit: { opacity: 0, y: -20, scale: 0.95, transition: { duration: 0.3 } }
       }}
       className={`
         ${item.colSpan} relative group rounded-md bg-[#141821]/80 backdrop-blur-sm border 
-        transition-all duration-300 overflow-hidden
-        ${isDimmed ? 'border-[#2D3442]/40 shadow-none' : 'border-[#2D3442] shadow-sm'} 
+        transition-all duration-300 overflow-hidden p-[1px]
+        ${isDimmed ? 'border-[#2D3442]/30 shadow-none' : 'border-[#2D3442] shadow-sm'} 
       `}
       style={{
         scale: isMobile ? 1 : finalScale,
@@ -224,85 +231,93 @@ const BentoCard = ({ item, index, hoveredIndex, setHoveredIndex, isSectionActive
         rotateX: isMobile ? 0 : rotateX,
         rotateY: isMobile ? 0 : rotateY,
         zIndex: isHovered ? 20 : 1,
-        transformStyle: "preserve-3d" // Enable 3D space for children
+        transformStyle: "preserve-3d"
       }}
       onMouseEnter={() => !isMobile && setHoveredIndex(index)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {/* 4. ACTIVE MODULE STATE: Corner Targeting Brackets */}
-      <CornerBrackets isHovered={isHovered} />
-
-      {/* Internal Background & Gradient */}
-      <motion.div
-        className="absolute inset-0 z-0 bg-gradient-to-br from-[#141821] to-[#0B0D10]"
-        animate={{
-          background: isHovered
-            ? "linear-gradient(135deg, #1E2330 0%, #141821 100%)"
-            : "linear-gradient(135deg, #141821 0%, #0B0D10 100%)"
-        }}
-        transition={{ duration: 0.3 }}
-        style={{ transform: "translateZ(0px)" }}
+      {/* Spotlight glowing border effect */}
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0 spotlight-border-glow" 
       />
 
-      {/* Subtle Scanline Texture */}
-      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+      <div className="relative w-full h-full bg-[#141821]/95 rounded-md overflow-hidden flex flex-col p-8 z-10">
+        
+        {/* Spotlight internal content glow */}
+        <div 
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0 spotlight-card-glow" 
+        />
 
-      {/* Index ID (Mechanical Feel) */}
-      <div className="absolute top-4 right-5 text-[10px] font-mono text-[#2D3442] group-hover:text-[#94A3B8] transition-colors duration-300" style={{ transform: "translateZ(10px)" }}>
-        SYS_0{index + 1}
-      </div>
+        {/* 4. ACTIVE MODULE STATE: Corner Targeting Brackets */}
+        <CornerBrackets isHovered={isHovered} />
 
-      <div className="relative z-10 p-8 flex flex-col h-full" style={{ transform: "translateZ(20px)" }}>
-        {/* Icon Container */}
-        <div className="mb-8 flex justify-between items-start">
-          <div className="p-3 rounded bg-[#0B0D10] border border-[#2D3442] text-[#EAEAF0] group-hover:border-[#94A3B8]/50 group-hover:shadow-[0_0_15px_rgba(148,163,184,0.1)] transition-all duration-300">
-            <motion.div animate={isHovered ? "active" : "idle"}>
-              {/* Custom Icon Animations */}
-              {item.type === 'frontend' && (
-                <motion.svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-                  <motion.polyline points="16 18 22 12 16 6" variants={{ active: { pathLength: [0, 1], opacity: [0, 1] }, idle: { pathLength: 1, opacity: 1 } }} transition={{ duration: 0.4 }} />
-                  <motion.polyline points="8 6 2 12 8 18" variants={{ active: { pathLength: [0, 1], opacity: [0, 1] }, idle: { pathLength: 1, opacity: 1 } }} transition={{ duration: 0.4, delay: 0.1 }} />
-                </motion.svg>
-              )}
-              {item.type === 'ui' && (
-                <motion.div variants={{ active: { scale: [1, 1.15, 1] }, idle: { scale: 1 } }} transition={{ duration: 0.3 }}>
-                  <Layout className="w-6 h-6" />
-                </motion.div>
-              )}
-              {item.type === 'motion' && (
-                <motion.div variants={{ active: { opacity: [1, 0.5, 1], scale: [1, 1.1, 1] }, idle: { opacity: 1, scale: 1 } }} transition={{ duration: 0.3 }}>
-                  <Zap className="w-6 h-6" />
-                </motion.div>
-              )}
-              {item.type === 'perf' && (
-                <motion.div variants={{ active: { rotate: [0, 10, -10, 0] }, idle: { rotate: 0 } }} transition={{ duration: 0.3 }}>
-                  <Activity className="w-6 h-6" />
-                </motion.div>
-              )}
-              {!['frontend', 'ui', 'motion', 'perf'].includes(item.type) && (
-                <motion.div variants={{ active: { rotate: [0, 15, 0] }, idle: { rotate: 0 } }}>
-                  <Icon className="w-6 h-6" />
-                </motion.div>
-              )}
-            </motion.div>
-          </div>
+        {/* Subtle Scanline Texture */}
+        <div className="absolute inset-0 z-0 opacity-[0.02] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+
+        {/* Index ID (Mechanical Feel) */}
+        <div className="absolute top-4 right-5 text-[10px] font-mono text-[#2D3442] group-hover:text-[#94A3B8] transition-colors duration-300" style={{ transform: "translateZ(10px)" }}>
+          SYS_0{index + 1}
         </div>
 
-        {/* Content */}
-        <div className="mt-auto">
-          <h3 className="text-xl md:text-2xl font-bold text-[#EAEAF0] mb-3 group-hover:text-white transition-colors tracking-tight">
-            {item.title}
-          </h3>
-          <p className="text-[#9AA0B2] text-sm md:text-base mb-6 leading-relaxed font-light">
-            {item.desc}
-          </p>
+        <div className="relative z-10 flex flex-col h-full" style={{ transform: "translateZ(20px)" }}>
+          {/* Icon Container */}
+          <div className="mb-8 flex justify-between items-start">
+            <div className="p-3 rounded bg-[#0B0D10] border border-[#2D3442] text-[#EAEAF0] group-hover:border-[#94A3B8]/50 group-hover:shadow-[0_0_15px_rgba(148,163,184,0.1)] transition-all duration-300">
+              <motion.div 
+                animate={isHovered ? "active" : "idle"}
+                variants={{
+                  active: { rotate: 8, scale: 1.05 },
+                  idle: { rotate: 0, scale: 1 }
+                }}
+                transition={{ duration: 0.3, ease: PREMIUM_EASE }}
+              >
+                {/* Custom Icon Animations */}
+                {item.type === 'frontend' && (
+                  <motion.svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                    <motion.polyline points="16 18 22 12 16 6" variants={{ active: { pathLength: [0, 1], opacity: [0, 1] }, idle: { pathLength: 1, opacity: 1 } }} transition={{ duration: 0.4 }} />
+                    <motion.polyline points="8 6 2 12 8 18" variants={{ active: { pathLength: [0, 1], opacity: [0, 1] }, idle: { pathLength: 1, opacity: 1 } }} transition={{ duration: 0.4, delay: 0.1 }} />
+                  </motion.svg>
+                )}
+                {item.type === 'ui' && (
+                  <motion.div variants={{ active: { scale: [1, 1.15, 1] }, idle: { scale: 1 } }} transition={{ duration: 0.3 }}>
+                    <Layout className="w-6 h-6" />
+                  </motion.div>
+                )}
+                {item.type === 'motion' && (
+                  <motion.div variants={{ active: { opacity: [1, 0.5, 1], scale: [1, 1.1, 1] }, idle: { opacity: 1, scale: 1 } }} transition={{ duration: 0.3 }}>
+                    <Zap className="w-6 h-6" />
+                  </motion.div>
+                )}
+                {item.type === 'perf' && (
+                  <motion.div variants={{ active: { rotate: [0, 10, -10, 0] }, idle: { rotate: 0 } }} transition={{ duration: 0.3 }}>
+                    <Activity className="w-6 h-6" />
+                  </motion.div>
+                )}
+                {!['frontend', 'ui', 'motion', 'perf'].includes(item.type) && (
+                  <motion.div>
+                    <Icon className="w-6 h-6" />
+                  </motion.div>
+                )}
+              </motion.div>
+            </div>
+          </div>
 
-          {/* Tag Discovery */}
-          <div className="flex flex-wrap gap-2">
-            {item.tags.map((tag: string, i: number) => (
-              <Tag key={i} text={tag} index={i} isCardHovered={isHovered} />
-            ))}
+          {/* Content */}
+          <div className="mt-auto">
+            <h3 className="text-xl md:text-2xl font-bold text-[#EAEAF0] mb-3 group-hover:text-white transition-colors tracking-tight">
+              {item.title}
+            </h3>
+            <p className="text-[#9AA0B2] text-sm md:text-base mb-6 leading-relaxed font-light">
+              {item.desc}
+            </p>
+
+            {/* Tag Discovery with stagger */}
+            <div className="flex flex-wrap gap-2">
+              {item.tags.map((tag: string, i: number) => (
+                <Tag key={i} text={tag} index={i} isCardHovered={isHovered} isSectionActive={isSectionActive} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -323,7 +338,7 @@ const CornerBrackets = ({ isHovered }: { isHovered: boolean }) => {
       initial="hidden"
       animate={isHovered ? "visible" : "hidden"}
       variants={variants}
-      style={{ transform: "translateZ(10px)" }} // Slight lift
+      style={{ transform: "translateZ(10px)" }}
     >
       <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#94A3B8]" />
       <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#94A3B8]" />
@@ -333,17 +348,19 @@ const CornerBrackets = ({ isHovered }: { isHovered: boolean }) => {
   );
 };
 
-const Tag: React.FC<{ text: string, index: number, isCardHovered: boolean }> = ({ text, index, isCardHovered }) => {
+const Tag: React.FC<{ text: string, index: number, isCardHovered: boolean, isSectionActive: boolean }> = ({ text, index, isCardHovered, isSectionActive }) => {
   return (
     <motion.span
-      initial={{ opacity: 0.6, y: 0 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{
-        opacity: isCardHovered ? 1 : 0.6,
+        opacity: isCardHovered ? 1 : isSectionActive ? 0.6 : 0,
+        y: isSectionActive ? 0 : 10,
         x: isCardHovered ? 2 : 0
       }}
       transition={{
-        duration: 0.2,
-        delay: isCardHovered ? index * 0.05 : 0,
+        opacity: { duration: 0.3, delay: isSectionActive && !isCardHovered ? index * 0.05 + 0.3 : 0 },
+        y: { duration: 0.3, delay: isSectionActive && !isCardHovered ? index * 0.05 + 0.3 : 0 },
+        x: { duration: 0.2 }
       }}
       className="text-[11px] uppercase tracking-wider font-mono text-[#555A6B] group-hover/tag:text-[#EAEAF0] cursor-default transition-colors duration-200"
     >

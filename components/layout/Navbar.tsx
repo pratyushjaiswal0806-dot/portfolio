@@ -9,6 +9,38 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) => {
   const [time, setTime] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+
+      // Section tracking for active tab indicator
+      if (currentView === 'home') {
+        const sections = ['skills', 'projects', 'about', 'contact'];
+        const scrollPosition = window.scrollY + window.innerHeight * 0.4;
+
+        let currentActive = "";
+        for (const section of sections) {
+          const el = document.getElementById(section);
+          if (el) {
+            const top = el.offsetTop;
+            const height = el.offsetHeight;
+            if (scrollPosition >= top && scrollPosition < top + height) {
+              currentActive = section;
+              break;
+            }
+          }
+        }
+        setActiveSection(currentActive);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [currentView]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -37,7 +69,11 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-0 left-0 w-full p-6 md:p-8 flex justify-between items-center z-40 mix-blend-difference"
+        className={`fixed top-0 left-0 w-full flex justify-between items-center z-40 transition-all duration-500 ${
+          scrolled 
+            ? 'p-4 md:py-4 md:px-8 bg-[#0B0D10]/80 backdrop-blur-md border-b border-[#2D3442]/30 shadow-lg' 
+            : 'p-6 md:p-8 bg-transparent border-b border-transparent'
+        }`}
       >
         <div
           className="flex items-center gap-4 cursor-pointer"
@@ -58,16 +94,28 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
         <div className="hidden md:flex gap-8 text-sm font-medium text-[#EAEAF0] items-center">
           {currentView === 'home' && (
             <>
-              {navItems.map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className="hover:text-[#94A3B8] transition-colors duration-300"
-                  data-cursor="hover"
-                >
-                  {item}
-                </a>
-              ))}
+              {navItems.map((item) => {
+                const isActive = activeSection === item.toLowerCase();
+                return (
+                  <a
+                    key={item}
+                    href={`#${item.toLowerCase()}`}
+                    className={`relative py-1 font-mono text-xs tracking-wider transition-colors duration-300 ${
+                      isActive ? 'text-[#EAEAF0]' : 'text-[#9AA0B2] hover:text-[#EAEAF0]'
+                    }`}
+                    data-cursor="hover"
+                  >
+                    {item}
+                    {isActive && (
+                      <motion.span
+                        layoutId="active-indicator"
+                        className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#94A3B8]"
+                        transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                      />
+                    )}
+                  </a>
+                );
+              })}
               <button
                 onClick={() => onViewChange && onViewChange('lab')}
                 className="px-4 py-2 bg-[#141821] border border-[#2D3442] rounded text-xs font-mono uppercase tracking-wider hover:border-[#94A3B8] transition-colors text-[#94A3B8]"

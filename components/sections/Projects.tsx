@@ -4,6 +4,8 @@ import { Project } from '../../types';
 import { X, ArrowRight, ExternalLink } from 'lucide-react';
 import techTokenImage from '../assets/tech-token-heist.png';
 import fancallImage from '../assets/fancall.png';
+import promptcompilerImage from '../assets/promptcompiler.png';
+import { PREMIUM_EASE } from '../ui/motion';
 
 const projects: Project[] = [
   {
@@ -30,13 +32,14 @@ const projects: Project[] = [
   },
   {
     id: '3',
-    title: 'Pilot',
-    category: 'SaaS Platform',
-    description: 'Focusing on usability and visual appeal to retain users longer on the website through strategic layout planning.',
-    image: 'https://picsum.photos/800/600?random=3',
-    year: '2023',
-    details: ['B2B Interface', 'Visual Hierarchy', 'Brand Identity'],
-    tech: ['React', 'Redux', 'SCSS']
+    title: 'PromptCompiler',
+    category: 'Developer Tool',
+    description: 'PromptCompiler is a local-first web workbench for analyzing and reducing LLM prompt size. It helps developers inspect token usage, remove duplicate/wasteful content, preserve critical facts (IDs, dates, URLs), and compile prompts into smaller shapes — all offline and deterministically, with optional NVIDIA NIM integration for assisted summarization.',
+    image: promptcompilerImage,
+    year: '2025',
+    details: ['Token Analysis', 'Offline & Deterministic', 'NVIDIA NIM Integration'],
+    tech: ['React', 'TypeScript', 'LLM'],
+    link: 'https://github.com/pratyushjaiswal0806-dot/promp-t.git'
   }
 ];
 
@@ -50,6 +53,8 @@ const Projects: React.FC = () => {
 
   // Transform that moves the project list horizontally
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
+
+  const springTransition = { type: 'spring', stiffness: 220, damping: 26 };
 
   return (
     <section id="projects" className="relative bg-[#0B0D10] z-20" aria-label="Selected Projects by Pratyush Jaiswal">
@@ -84,7 +89,7 @@ const Projects: React.FC = () => {
         </div>
       </div>
 
-      {/* Expanded Project View */}
+      {/* Expanded Project View (Modal with shared spring transition) */}
       <AnimatePresence>
         {selectedId && (
           <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 md:px-0">
@@ -93,21 +98,28 @@ const Projects: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedId(null)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/85 backdrop-blur-md"
             />
 
             {projects.filter(p => p.id === selectedId).map(project => (
               <motion.div
                 key={project.id}
                 layoutId={`card-container-${project.id}`}
+                transition={springTransition}
                 className="relative w-full max-w-5xl max-h-[90vh] bg-[#141821] rounded-2xl overflow-y-auto overflow-x-hidden scrollbar-hide border border-[#2D3442] z-10 shadow-2xl"
               >
                 <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
+                  {/* Ken Burns zoom animation */}
                   <motion.img
                     layoutId={`image-${project.id}`}
                     src={project.image}
                     alt={`${project.title} — project by Pratyush Jaiswal`}
                     className="w-full h-full object-cover"
+                    animate={{ scale: 1.05 }}
+                    transition={{
+                      layout: springTransition,
+                      scale: { duration: 15, ease: "easeOut", repeat: Infinity, repeatType: "reverse" }
+                    }}
                     loading="lazy"
                     width="1200"
                     height="675"
@@ -130,8 +142,8 @@ const Projects: React.FC = () => {
                 >
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
                     <div className="flex-1">
-                      <motion.p layoutId={`cat-${project.id}`} className="text-[#94A3B8] font-mono text-sm uppercase tracking-widest mb-3">{project.category}</motion.p>
-                      <motion.h3 layoutId={`title-${project.id}`} className="text-4xl md:text-6xl font-bold text-white tracking-tight">{project.title}</motion.h3>
+                      <motion.p layoutId={`cat-${project.id}`} transition={springTransition} className="text-[#94A3B8] font-mono text-sm uppercase tracking-widest mb-3">{project.category}</motion.p>
+                      <motion.h3 layoutId={`title-${project.id}`} transition={springTransition} className="text-4xl md:text-6xl font-bold text-white tracking-tight">{project.title}</motion.h3>
                     </div>
                     <div className="flex gap-2 shrink-0">
                       {project.link ? (
@@ -238,43 +250,51 @@ const ProjectCard: React.FC<{
 
   const scale = useTransform(scrollYProgress,
     [start - 0.2, center, end + 0.2],
-    [0.9, 1, 0.9]
+    [0.94, 1, 0.94]
   );
   const opacity = useTransform(scrollYProgress,
     [start - 0.2, center, end + 0.2],
-    [0.5, 1, 0.5]
+    [0.4, 1, 0.4]
   );
 
   const filter = useTransform(scrollYProgress,
     [start - 0.2, center, end + 0.2],
-    ["grayscale(100%) blur(2px)", "grayscale(0%) blur(0px)", "grayscale(100%) blur(2px)"]
+    ["grayscale(100%) blur(4px)", "grayscale(0%) blur(0px)", "grayscale(100%) blur(4px)"]
   );
+
+  const springTransition = { type: 'spring', stiffness: 220, damping: 26 };
 
   return (
     <motion.div
       layoutId={`card-container-${project.id}`}
+      transition={springTransition}
       onClick={() => setSelectedId(project.id)}
       style={{ scale, opacity, filter }}
+      data-cursor="project-card"
       className="relative w-[80vw] md:w-[600px] h-[50vh] md:h-[60vh] bg-[#141821] rounded-2xl overflow-hidden cursor-pointer group border border-[#2D3442] flex-shrink-0"
     >
       <motion.img
         layoutId={`image-${project.id}`}
+        transition={springTransition}
         src={project.image}
         alt={`${project.title} — a project by Pratyush Jaiswal | ${project.category}`}
-        className="w-full h-full object-cover transition-transform duration-700"
+        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         loading="lazy"
         width="800"
         height="600"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D10] via-transparent to-transparent opacity-90" />
+      
+      {/* Sliding color gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D10] via-transparent to-transparent opacity-90 group-hover:opacity-75 transition-opacity duration-500 z-10" />
 
-      <div className="absolute bottom-0 left-0 p-8 w-full">
-        <motion.p layoutId={`cat-${project.id}`} className="text-[#94A3B8] text-sm font-bold uppercase tracking-wider mb-2">{project.category}</motion.p>
-        <motion.h3 layoutId={`title-${project.id}`} className="text-3xl md:text-4xl font-bold text-white mb-2">{project.title}</motion.h3>
-        <p className="text-[#9AA0B2] line-clamp-2">{project.description}</p>
+      {/* Slide shifting title container */}
+      <div className="absolute bottom-0 left-0 p-8 w-full z-20 transform group-hover:-translate-y-1.5 transition-transform duration-500">
+        <motion.p layoutId={`cat-${project.id}`} transition={springTransition} className="text-[#94A3B8] text-sm font-bold uppercase tracking-wider mb-2">{project.category}</motion.p>
+        <motion.h3 layoutId={`title-${project.id}`} transition={springTransition} className="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:text-white transition-colors">{project.title}</motion.h3>
+        <p className="text-[#9AA0B2] line-clamp-2 font-light text-sm md:text-base leading-relaxed">{project.description}</p>
       </div>
 
-      <div className="absolute top-8 right-8 bg-black/30 backdrop-blur-md p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-white/10">
+      <div className="absolute top-8 right-8 bg-black/30 backdrop-blur-md p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-white/10 z-20">
         <ArrowRight className="text-white w-6 h-6 -rotate-45" />
       </div>
     </motion.div>

@@ -61,11 +61,19 @@ const Hero: React.FC = () => {
   const parallaxX = useTransform(smoothMouseX, (v) => isMobile ? 0 : (v - dimensions.width / 2) * 0.015);
   const parallaxY = useTransform(smoothMouseY, (v) => isMobile ? 0 : (v - dimensions.height / 2) * 0.015);
 
-  const bgX = useTransform(parallaxX, (v) => v * 0.2); 
-  const bgY = useTransform([scrollBgY, parallaxY], ([s, p]) => (s as number) + (p as number) * 0.2);
+  const bgX = useTransform(parallaxX, (v) => v * 0.25); 
+  const bgY = useTransform([scrollBgY, parallaxY], ([s, p]) => (s as number) + (p as number) * 0.25);
   
   const fgX = parallaxX;
   const fgY = useTransform([scrollFgY, parallaxY], ([s, p]) => (s as number) + (p as number));
+
+  // Dynamic parallax for the system panel
+  const panelParallaxX = useTransform(smoothMouseX, (v) => isMobile ? 0 : (v - dimensions.width / 2) * 0.012);
+  const panelParallaxY = useTransform(smoothMouseY, (v) => isMobile ? 0 : (v - dimensions.height / 2) * 0.012);
+  const panelParallaxYCombined = useTransform([panelY, panelParallaxY], ([s, p]) => (s as number) + (p as number));
+
+  // Dynamic opacity for scroll indicator based on scroll position
+  const scrollIndicatorOpacity = useTransform(scrollY, [0, 150], [1, 0]);
 
   // Dynamic mask template based on velocity radius
   const maskImage = useMotionTemplate`radial-gradient(${smoothMaskRadius}px circle at ${mouseX}px ${mouseY}px, black, transparent)`;
@@ -87,7 +95,7 @@ const Hero: React.FC = () => {
         className="absolute inset-0 z-0 pointer-events-none scale-105 origin-center"
       >
         <BlueprintGrid color="#2D3442" opacity={0.15} size={60} strokeWidth={1} />
-        {!isMobile && <GridNodes count={8} size={60} dimensions={dimensions} />}
+        {!isMobile && <GridNodes count={8} size={60} dimensions={dimensions} mouseX={smoothMouseX} mouseY={smoothMouseY} />}
 
         {/* Cursor Pressure Grid */}
         <motion.div 
@@ -115,7 +123,12 @@ const Hero: React.FC = () => {
 
         {/* RIGHT COLUMN: System Panel (Desktop Only) */}
         <motion.div 
-          style={{ y: panelY, rotateX: useTransform(smoothMouseY, [0, 1000], [5, -5]), rotateY: useTransform(smoothMouseX, [0, 1000], [-5, 5]) }}
+          style={{ 
+            x: panelParallaxX, 
+            y: panelParallaxYCombined, 
+            rotateX: useTransform(smoothMouseY, [0, 1000], [5, -5]), 
+            rotateY: useTransform(smoothMouseX, [0, 1000], [-5, 5]) 
+          }}
           className="lg:col-span-5 hidden lg:flex justify-end perspective-1000"
         >
           <SystemPanel />
@@ -125,7 +138,7 @@ const Hero: React.FC = () => {
       {/* LAYER 3: Bottom Aligned Footer Elements (Matches Content Grid) */}
       <div className="absolute bottom-10 left-0 w-full z-20 pointer-events-none">
          <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 flex justify-between items-end">
-            <ScrollIndicator />
+            <ScrollIndicator opacity={scrollIndicatorOpacity} />
             <SystemStatus />
          </div>
       </div>
@@ -217,7 +230,7 @@ const BlueprintGrid = ({ color, opacity, size = 60, strokeWidth = 1 }: { color: 
 };
 
 // 3. Intelligent Grid Nodes
-const GridNodes = ({ count, size, dimensions }: { count: number, size: number, dimensions: { width: number, height: number } }) => {
+const GridNodes = ({ count, size, dimensions, mouseX, mouseY }: { count: number, size: number, dimensions: { width: number, height: number }, mouseX: any, mouseY: any }) => {
   const [nodes, setNodes] = useState<{id: number, x: number, y: number, delay: number}[]>([]);
 
   useEffect(() => {
@@ -247,21 +260,28 @@ const GridNodes = ({ count, size, dimensions }: { count: number, size: number, d
   return (
     <>
       {nodes.map((node) => (
-        <SystemNode key={node.id} x={node.x} y={node.y} delay={node.delay} />
+        <SystemNode key={node.id} x={node.x} y={node.y} delay={node.delay} mouseX={mouseX} mouseY={mouseY} />
       ))}
     </>
   );
 }
 
-const SystemNode: React.FC<{ x: number, y: number, delay: number }> = ({ x, y, delay }) => {
+const SystemNode: React.FC<{ x: number, y: number, delay: number, mouseX: any, mouseY: any }> = ({ x, y, delay, mouseX, mouseY }) => {
+    // Generate different depth factors per node for parallax depth layering
+    const depthFactorX = useRef((Math.random() * 0.015 + 0.005) * (Math.random() > 0.5 ? 1 : -1));
+    const depthFactorY = useRef((Math.random() * 0.015 + 0.005) * (Math.random() > 0.5 ? 1 : -1));
+
+    const finalX = useTransform(mouseX, (v: number) => x + v * depthFactorX.current);
+    const finalY = useTransform(mouseY, (v: number) => y + v * depthFactorY.current);
+
     return (
         <motion.div
           className="absolute w-1.5 h-1.5 rounded-full bg-[#EAEAF0]" 
-          style={{ left: x - 3, top: y - 3, opacity: 0.05 }}
+          style={{ left: finalX, top: finalY, opacity: 0.05 }}
           animate={{ 
-            opacity: [0.05, 0.5, 0.05],
-            scale: [1, 1.2, 1],
-            boxShadow: [ "0 0 0px rgba(234, 234, 240, 0)", "0 0 8px rgba(234, 234, 240, 0.3)", "0 0 0px rgba(234, 234, 240, 0)" ]
+            opacity: [0.05, 0.4, 0.05],
+            scale: [1, 1.3, 1],
+            boxShadow: [ "0 0 0px rgba(234, 234, 240, 0)", "0 0 6px rgba(234, 234, 240, 0.25)", "0 0 0px rgba(234, 234, 240, 0)" ]
           }}
           transition={{ duration: 4, times: [0, 0.5, 1], delay: delay, repeat: Infinity, repeatDelay: Math.random() * 10 + 5, ease: "easeInOut" }}
         />
@@ -300,6 +320,7 @@ const RotatingRole = () => {
 
 // 5. Main Text Content
 const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverChange: (hover: boolean) => void, onNameHoverChange: (hover: boolean) => void, contentY: any }) => {
+  const btnRef = useRef<HTMLAnchorElement>(null);
   
   const container = {
     hidden: { opacity: 0 },
@@ -307,13 +328,22 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
   };
 
   const itemAnim = {
-    hidden: { y: 30, opacity: 0 },
-    show: { y: 0, opacity: 1, transition: { duration: 0.9, ease: MECHANICAL_EASE } }
+    hidden: { y: 25, opacity: 0, filter: 'blur(4px)' },
+    show: { y: 0, opacity: 1, filter: 'blur(0px)', transition: { duration: 0.9, ease: MECHANICAL_EASE } }
   };
   
   const roleAnim = {
-    hidden: { y: 30, opacity: 0 },
-    show: { y: 0, opacity: 1, transition: { duration: 0.9, delay: 0.6, ease: MECHANICAL_EASE } }
+    hidden: { y: 25, opacity: 0, filter: 'blur(4px)' },
+    show: { y: 0, opacity: 1, filter: 'blur(0px)', transition: { duration: 0.9, delay: 0.6, ease: MECHANICAL_EASE } }
+  };
+
+  const handleBtnMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!btnRef.current) return;
+    const rect = btnRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    btnRef.current.style.setProperty('--mouse-x', `${x}px`);
+    btnRef.current.style.setProperty('--mouse-y', `${y}px`);
   };
 
   return (
@@ -330,10 +360,10 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
         <span className="text-xs font-mono text-[#94A3B8] tracking-[0.2em] uppercase">Building & Learning Every Day</span>
       </motion.div>
 
-      {/* Name & Role — H1 is the single most important on-page SEO element */}
+      {/* Name & Role — H1 with gradient sweep */}
       <div className="mb-6">
         <h1
-          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-[#EAEAF0] leading-[1] mb-2 cursor-none origin-left relative whitespace-nowrap"
+          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1] mb-2 cursor-none origin-left relative whitespace-nowrap gradient-sweep"
           data-cursor="hero-text"
           aria-label="Pratyush Jaiswal"
           onMouseEnter={() => onNameHoverChange(true)}
@@ -355,7 +385,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
         </motion.div>
       </div>
 
-      {/* Description */}
+      {/* Description with blur reveal */}
       <motion.p 
         variants={itemAnim}
         className="mt-8 text-lg md:text-xl text-[#9AA0B2] max-w-lg leading-relaxed font-light"
@@ -363,11 +393,13 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
         CSE student at RVITM who loves building things — from clean interfaces to clever algorithms. Always shipping, always learning.
       </motion.p>
 
-      {/* CTA Button */}
+      {/* CTA Button with Mouse Glow */}
       <motion.div variants={itemAnim} className="mt-12">
-        <Magnetic strength={0.2}>
+        <Magnetic strength={0.25}>
           <a 
+            ref={btnRef}
             href="#projects"
+            onMouseMove={handleBtnMouseMove}
             className="group relative inline-flex items-center gap-4 px-8 py-4 bg-transparent text-[#EAEAF0] font-medium transition-all duration-300"
             onMouseEnter={() => onHoverChange(true)}
             onMouseLeave={() => onHoverChange(false)}
@@ -377,9 +409,18 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
             <span className="absolute bottom-0 right-0 w-[1px] h-0 bg-[#94A3B8] group-hover:h-full group-hover:bg-[#EAEAF0] group-hover:shadow-[0_0_10px_#94A3B8] transition-all duration-300 delay-100 ease-out" />
             <span className="absolute top-0 left-0 h-[1px] w-0 bg-[#94A3B8] group-hover:w-full group-hover:bg-[#EAEAF0] group-hover:shadow-[0_0_10px_#94A3B8] transition-all duration-300 ease-out" />
             <span className="absolute bottom-0 right-0 h-[1px] w-0 bg-[#94A3B8] group-hover:w-full group-hover:bg-[#EAEAF0] group-hover:shadow-[0_0_10px_#94A3B8] transition-all duration-300 ease-out" />
-            <span className="absolute inset-0 bg-[#94A3B8]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            {/* Spotlight Glow */}
+            <span className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 spotlight-card-glow" />
+            
             <span className="relative z-10 font-mono tracking-wider text-sm">OPEN BLUEPRINT</span>
-            <ArrowDown className="w-4 h-4 relative z-10 group-hover:translate-y-1 group-hover:text-[#EAEAF0] transition-all text-[#94A3B8]" />
+            <motion.span 
+              className="relative z-10 text-[#94A3B8] group-hover:text-[#EAEAF0] transition-colors"
+              animate={{ y: [0, 4, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+            >
+              <ArrowDown className="w-4 h-4" />
+            </motion.span>
           </a>
         </Magnetic>
       </motion.div>
@@ -387,35 +428,82 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
   );
 };
 
-// 6. System Panel (Right Side) - Terminal Upgrade
+// 6. System Panel (Right Side) - Terminal Upgrade with Typewriter Logs
 const SystemPanel = () => {
   const [logs, setLogs] = useState<string[]>([]);
-  const messages = [
-      "INITIALIZING KERNEL...",
-      "LOADING MODULES...",
-      "COMPILING SOURCE CODE...",
-      "LINKING DEPENDENCIES...",
-      "RUNNING TEST SUITE...",
-      "ALL TESTS PASSED.",
-      "SYSTEM READY."
-  ];
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-      let delay = 0;
-      messages.forEach((msg, i) => {
-          delay += Math.random() * 500 + 300;
-          setTimeout(() => {
-              setLogs(prev => [...prev.slice(-6), `> ${msg}`]);
-          }, delay);
+    const messages = [
+      "INITIALIZING KERNEL...",
+      "LOADING SYSTEM MODULES...",
+      "COMPILING PORTFOLIO SOURCE...",
+      "LINKING DEPENDENCIES...",
+      "RUNNING PERFORMANCE SUITE...",
+      "ALL SYSTEMS OPTIMIZED.",
+      "SYSTEM READY."
+    ];
+
+    let msgIndex = 0;
+    let charIndex = 0;
+    let currentLineText = "";
+
+    const typeNextChar = () => {
+      if (msgIndex >= messages.length) {
+        setIsReady(true);
+        return;
+      }
+
+      const fullMessage = messages[msgIndex];
+
+      if (charIndex === 0) {
+        currentLineText = "> ";
+      }
+
+      currentLineText += fullMessage[charIndex];
+      charIndex++;
+
+      setLogs(prev => {
+        if (charIndex === 1) {
+          // Add a new line
+          return [...prev.slice(-6), currentLineText];
+        } else {
+          // Update the current line
+          const nextLogs = [...prev];
+          nextLogs[nextLogs.length - 1] = currentLineText;
+          return nextLogs;
+        }
       });
+
+      if (charIndex < fullMessage.length) {
+        setTimeout(typeNextChar, Math.random() * 20 + 10);
+      } else {
+        // Line finished, prepare for next line
+        msgIndex++;
+        charIndex = 0;
+        setTimeout(typeNextChar, Math.random() * 200 + 100);
+      }
+    };
+
+    const startupTimeout = setTimeout(typeNextChar, 800);
+    return () => clearTimeout(startupTimeout);
   }, []);
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 1, duration: 1, ease: MECHANICAL_EASE }}
-      className="relative w-80 h-96 border border-[#2D3442] bg-[#0B0D10]/90 backdrop-blur-md rounded-lg overflow-hidden group hover:border-[#94A3B8] transition-all duration-500 flex flex-col"
+      initial={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
+      animate={isReady ? { 
+        opacity: 1, 
+        scale: 1, 
+        filter: "blur(0px)",
+        boxShadow: "0 0 30px rgba(148, 163, 184, 0.05)"
+      } : { 
+        opacity: 1, 
+        scale: 1, 
+        filter: "blur(0px)" 
+      }}
+      transition={{ delay: 0.6, duration: 1, ease: MECHANICAL_EASE }}
+      className="relative w-80 h-96 border border-[#2D3442] bg-[#0B0D10]/95 backdrop-blur-md rounded-lg overflow-hidden group hover:border-[#94A3B8] transition-all duration-500 flex flex-col"
     >
       {/* Header */}
       <div className="flex justify-between items-center p-3 border-b border-[#2D3442] bg-[#141821]/50">
@@ -433,21 +521,32 @@ const SystemPanel = () => {
       {/* Terminal Body */}
       <div className="flex-1 p-4 font-mono text-[10px] text-[#9AA0B2] flex flex-col justify-end">
           <div className="space-y-1.5">
-            {logs.map((log, i) => (
-                <motion.div 
-                    key={i} 
-                    initial={{ opacity: 0, x: -10 }} 
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex"
-                >
-                    <span className="mr-2 text-[#555A6B]">{new Date().toLocaleTimeString('en-US', {hour12: false, hour: '2-digit', minute:'2-digit', second: '2-digit'})}</span>
-                    <span className={log.includes("READY") ? "text-green-400" : "text-[#94A3B8]"}>{log}</span>
-                </motion.div>
-            ))}
+            {logs.map((log, i) => {
+                const isReadyMsg = log.includes("SYSTEM READY");
+                return (
+                  <motion.div 
+                      key={i} 
+                      initial={{ opacity: 0, x: -6 }} 
+                      animate={{ opacity: 1, x: 0 }}
+                      className="flex"
+                  >
+                      <span className="mr-2 text-[#555A6B]">{new Date().toLocaleTimeString('en-US', {hour12: false, hour: '2-digit', minute:'2-digit', second: '2-digit'})}</span>
+                      <motion.span 
+                        className={isReadyMsg ? "text-green-400 font-bold" : "text-[#94A3B8]"}
+                        animate={isReadyMsg ? { scale: [1, 1.05, 1] } : {}}
+                        transition={isReadyMsg ? { repeat: Infinity, duration: 2, ease: "easeInOut" } : {}}
+                      >
+                        {log}
+                      </motion.span>
+                  </motion.div>
+                );
+            })}
+            
+            {/* Blinking Cursor */}
             <motion.div 
                 animate={{ opacity: [0, 1, 0] }} 
                 transition={{ duration: 0.8, repeat: Infinity }}
-                className="w-2 h-4 bg-[#94A3B8] mt-1"
+                className="w-1.5 h-3 bg-[#94A3B8] mt-1"
             />
           </div>
       </div>
@@ -471,17 +570,25 @@ const SystemPanel = () => {
   );
 };
 
-// 7. Scroll Indicator Component (Refactored for Layout Alignment)
-const ScrollIndicator = () => {
+// 7. Scroll Indicator Component (Refactored to show bouncing scroll pill and fade with scroll)
+const ScrollIndicator = ({ opacity }: { opacity: any }) => {
   return (
     <motion.div 
-      className="flex items-center gap-4 text-[#9AA0B2] pointer-events-auto"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 2.5, duration: 1 }}
+      className="flex flex-col items-center gap-2 text-[#9AA0B2] pointer-events-auto cursor-pointer"
+      style={{ opacity }}
+      onClick={() => {
+        const skillsEl = document.getElementById('skills');
+        if (skillsEl) skillsEl.scrollIntoView({ behavior: 'smooth' });
+      }}
     >
-      <div className="h-[1px] w-12 bg-[#2D3442]" />
-      <span className="text-[10px] font-mono uppercase tracking-widest opacity-60">System Ready</span>
+      <span className="text-[9px] font-mono uppercase tracking-[0.2em] opacity-50">Scroll to Explore</span>
+      <div className="w-5 h-8 border border-[#2D3442] rounded-full flex justify-center p-1">
+        <motion.div 
+          className="w-1 h-1.5 bg-[#94A3B8] rounded-full"
+          animate={{ y: [0, 12, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
     </motion.div>
   );
 };

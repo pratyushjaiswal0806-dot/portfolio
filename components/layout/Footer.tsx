@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, ArrowUp, ExternalLink } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowUp, ExternalLink, FileDown } from 'lucide-react';
 import { PREMIUM_EASE, fadeUp } from '../ui/motion';
 
 const Footer: React.FC = () => {
+  const resumeHref = '/Pratyush-Jaiswal-Resume.md';
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -96,6 +97,10 @@ const Footer: React.FC = () => {
                 <Mail size={14} className="group-hover:text-[#EAEAF0] transition-colors" />
                 Email
                 <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+              <a href={resumeHref} download className="text-[#555A6B] hover:text-[#EAEAF0] transition-colors text-sm flex items-center gap-2 group">
+                <FileDown size={14} className="group-hover:text-[#EAEAF0] transition-colors" />
+                Resume
               </a>
             </div>
           </div>

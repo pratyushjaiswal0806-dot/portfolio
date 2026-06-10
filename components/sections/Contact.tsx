@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import Magnetic from '../ui/Magnetic';
-import { Linkedin, Mail, Phone, Github } from 'lucide-react';
+import { Linkedin, Mail, Phone, Github, FileDown } from 'lucide-react';
 import { PREMIUM_EASE, staggerContainer, fadeUp } from '../ui/motion';
 
 const channels = [
@@ -11,6 +11,8 @@ const channels = [
   { icon: Linkedin, label: 'LinkedIn', value: 'Pratyush Jaiswal', href: 'https://www.linkedin.com/in/pratyush-jaiswal-ba0b6926a', external: true },
   { icon: Phone, label: 'Phone', value: '+91 877 095 3990', href: 'tel:+918770953990', external: false },
 ];
+
+const resumeHref = '/Pratyush-Jaiswal-Resume.md';
 
 const Contact: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -81,7 +83,7 @@ const Contact: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.2, ease: PREMIUM_EASE }}
           className="text-[#9AA0B2] text-lg md:text-xl mb-14 max-w-lg mx-auto leading-relaxed font-light"
         >
-          Have a project in mind? Let's connect and build something extraordinary.
+          Have a project, internship, or frontend role in mind? Let's connect.
         </motion.p>
 
         {/* CTA Button */}
@@ -93,18 +95,29 @@ const Contact: React.FC = () => {
           className="flex justify-center mb-20"
         >
           <Magnetic strength={0.25}>
-            <a
-              href="mailto:pratyushjaiswal0806@gmail.com"
-              className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#EAEAF0] text-[#0B0D10] text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(148,163,184,0.1)] hover:shadow-[0_0_30px_rgba(148,163,184,0.25)]"
-              data-cursor="hover"
-            >
-              GET IN TOUCH
-              <span className="w-0 group-hover:w-4 overflow-hidden transition-all duration-300">
-                <svg className="w-4 h-4 -ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </span>
-            </a>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <a
+                href="mailto:pratyushjaiswal0806@gmail.com"
+                className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#EAEAF0] text-[#0B0D10] text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(148,163,184,0.1)] hover:shadow-[0_0_30px_rgba(148,163,184,0.25)]"
+                data-cursor="hover"
+              >
+                GET IN TOUCH
+                <span className="w-0 group-hover:w-4 overflow-hidden transition-all duration-300">
+                  <svg className="w-4 h-4 -ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </a>
+              <a
+                href={resumeHref}
+                download
+                className="inline-flex items-center gap-3 px-8 py-5 border border-[#2D3442] text-[#EAEAF0] text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:border-[#94A3B8] hover:text-white transition-all duration-300"
+                data-cursor="hover"
+              >
+                Resume
+                <FileDown className="w-4 h-4 text-[#94A3B8]" />
+              </a>
+            </div>
           </Magnetic>
         </motion.div>
 

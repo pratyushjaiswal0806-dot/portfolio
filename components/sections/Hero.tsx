@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate, AnimatePresence, useVelocity } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate, AnimatePresence, useVelocity, useReducedMotion } from 'framer-motion';
 import { ArrowDown, Terminal, Wifi, Battery, Disc } from 'lucide-react';
 import Magnetic from '../ui/Magnetic';
 
@@ -11,6 +11,7 @@ const Hero: React.FC = () => {
   const [isCtaHovered, setIsCtaHovered] = useState(false);
   const [isHeroNameHovered, setIsHeroNameHovered] = useState(false); 
   const { scrollY } = useScroll();
+  const shouldReduceMotion = useReducedMotion();
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [isMobile, setIsMobile] = useState(false);
 
@@ -50,16 +51,16 @@ const Hero: React.FC = () => {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (isMobile) return;
+      if (isMobile || shouldReduceMotion) return;
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY, isMobile]);
+  }, [mouseX, mouseY, isMobile, shouldReduceMotion]);
 
-  const parallaxX = useTransform(smoothMouseX, (v) => isMobile ? 0 : (v - dimensions.width / 2) * 0.015);
-  const parallaxY = useTransform(smoothMouseY, (v) => isMobile ? 0 : (v - dimensions.height / 2) * 0.015);
+  const parallaxX = useTransform(smoothMouseX, (v) => isMobile || shouldReduceMotion ? 0 : (v - dimensions.width / 2) * 0.015);
+  const parallaxY = useTransform(smoothMouseY, (v) => isMobile || shouldReduceMotion ? 0 : (v - dimensions.height / 2) * 0.015);
 
   const bgX = useTransform(parallaxX, (v) => v * 0.25); 
   const bgY = useTransform([scrollBgY, parallaxY], ([s, p]) => (s as number) + (p as number) * 0.25);
@@ -68,8 +69,8 @@ const Hero: React.FC = () => {
   const fgY = useTransform([scrollFgY, parallaxY], ([s, p]) => (s as number) + (p as number));
 
   // Dynamic parallax for the system panel
-  const panelParallaxX = useTransform(smoothMouseX, (v) => isMobile ? 0 : (v - dimensions.width / 2) * 0.012);
-  const panelParallaxY = useTransform(smoothMouseY, (v) => isMobile ? 0 : (v - dimensions.height / 2) * 0.012);
+  const panelParallaxX = useTransform(smoothMouseX, (v) => isMobile || shouldReduceMotion ? 0 : (v - dimensions.width / 2) * 0.012);
+  const panelParallaxY = useTransform(smoothMouseY, (v) => isMobile || shouldReduceMotion ? 0 : (v - dimensions.height / 2) * 0.012);
   const panelParallaxYCombined = useTransform([panelY, panelParallaxY], ([s, p]) => (s as number) + (p as number));
 
   // Dynamic opacity for scroll indicator based on scroll position
@@ -95,7 +96,7 @@ const Hero: React.FC = () => {
         className="absolute inset-0 z-0 pointer-events-none scale-105 origin-center"
       >
         <BlueprintGrid color="#2D3442" opacity={0.15} size={60} strokeWidth={1} />
-        {!isMobile && <GridNodes count={8} size={60} dimensions={dimensions} mouseX={smoothMouseX} mouseY={smoothMouseY} />}
+        {!isMobile && !shouldReduceMotion && <GridNodes count={8} size={60} dimensions={dimensions} mouseX={smoothMouseX} mouseY={smoothMouseY} />}
 
         {/* Cursor Pressure Grid */}
         <motion.div 
@@ -118,6 +119,7 @@ const Hero: React.FC = () => {
             onHoverChange={setIsCtaHovered} 
             onNameHoverChange={setIsHeroNameHovered}
             contentY={contentY}
+            shouldReduceMotion={shouldReduceMotion}
           />
         </div>
 
@@ -179,11 +181,15 @@ const DecryptedText = ({
     };
 
     useEffect(() => {
+        if (!animateOnHover) {
+            setIteration(text.length);
+            return;
+        }
         runAnimation();
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
         };
-    }, [text]);
+    }, [text, animateOnHover]);
 
     const handleHover = () => {
         if (!animateOnHover || iteration < text.length) return;
@@ -289,26 +295,27 @@ const SystemNode: React.FC<{ x: number, y: number, delay: number, mouseX: any, m
 }
 
 // 4. Rotating Role Component
-const RotatingRole = () => {
+const RotatingRole = ({ shouldReduceMotion }: { shouldReduceMotion: boolean | null }) => {
   const roles = ["CS Student", "Problem Solver", "Builder"];
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    if (shouldReduceMotion) return;
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % roles.length);
     }, 3000);
     return () => clearInterval(timer);
-  }, []);
+  }, [shouldReduceMotion]);
 
   return (
     <div className="h-[1.1em] overflow-hidden relative inline-block align-bottom ml-2 md:ml-4 w-full md:w-auto">
       <AnimatePresence mode="wait">
         <motion.span
           key={index}
-          initial={{ y: 40, opacity: 0, rotateX: -90 }}
-          animate={{ y: 0, opacity: 0.6, rotateX: 0 }} 
-          exit={{ y: -40, opacity: 0, rotateX: 90 }}
-          transition={{ duration: 0.5, ease: MECHANICAL_EASE }}
+          initial={shouldReduceMotion ? false : { y: 40, opacity: 0, rotateX: -90 }}
+          animate={{ y: 0, opacity: 0.6, rotateX: 0 }}
+          exit={shouldReduceMotion ? undefined : { y: -40, opacity: 0, rotateX: 90 }}
+          transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5, ease: MECHANICAL_EASE }}
           className="block text-[#9AA0B2] font-bold tracking-widest"
         >
           {roles[index]}
@@ -319,7 +326,7 @@ const RotatingRole = () => {
 };
 
 // 5. Main Text Content
-const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverChange: (hover: boolean) => void, onNameHoverChange: (hover: boolean) => void, contentY: any }) => {
+const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceMotion }: { onHoverChange: (hover: boolean) => void, onNameHoverChange: (hover: boolean) => void, contentY: any, shouldReduceMotion: boolean | null }) => {
   const btnRef = useRef<HTMLAnchorElement>(null);
   
   const container = {
@@ -351,7 +358,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
       variants={container}
       initial="hidden"
       animate="show"
-      style={{ y: contentY }}
+      style={shouldReduceMotion ? undefined : { y: contentY }}
       className="relative"
     >
       {/* Label */}
@@ -372,7 +379,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
           {/* sr-only text ensures Google indexes the real name, not scrambled chars */}
           <span className="sr-only">Pratyush Jaiswal</span>
           <span aria-hidden="true">
-            <DecryptedText text="Pratyush Jaiswal" />
+            <DecryptedText text="Pratyush Jaiswal" animateOnHover={!shouldReduceMotion} />
           </span>
         </h1>
         <motion.div 
@@ -381,7 +388,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
           data-cursor="text-hover"
         >
           <span className="text-[#9AA0B2] opacity-30 font-medium mr-2 tracking-wide">is a</span>
-          <RotatingRole />
+          <RotatingRole shouldReduceMotion={shouldReduceMotion} />
         </motion.div>
       </div>
 
@@ -390,7 +397,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
         variants={itemAnim}
         className="mt-8 text-lg md:text-xl text-[#9AA0B2] max-w-lg leading-relaxed font-light"
       >
-        CSE student at RVITM who loves building things — from clean interfaces to clever algorithms. Always shipping, always learning.
+        CSE student building fast React interfaces, real-time apps, developer tools, and algorithm-focused projects.
       </motion.p>
 
       {/* CTA Button with Mouse Glow */}
@@ -416,8 +423,8 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY }: { onHoverCh
             <span className="relative z-10 font-mono tracking-wider text-sm">OPEN BLUEPRINT</span>
             <motion.span 
               className="relative z-10 text-[#94A3B8] group-hover:text-[#EAEAF0] transition-colors"
-              animate={{ y: [0, 4, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+              animate={shouldReduceMotion ? undefined : { y: [0, 4, 0] }}
+              transition={shouldReduceMotion ? undefined : { repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
             >
               <ArrowDown className="w-4 h-4" />
             </motion.span>

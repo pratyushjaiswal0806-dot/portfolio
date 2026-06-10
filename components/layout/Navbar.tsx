@@ -18,7 +18,7 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
 
       // Section tracking for active tab indicator
       if (currentView === 'home') {
-        const sections = ['skills', 'projects', 'about', 'contact'];
+        const sections = ['tech-stack', 'projects', 'about', 'contact'];
         const scrollPosition = window.scrollY + window.innerHeight * 0.4;
 
         let currentActive = "";
@@ -52,13 +52,14 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
     return () => clearInterval(interval);
   }, []);
 
-  const navItems = ['Skills', 'Projects', 'About', 'Contact'];
+  const navItems = ['Tech Stack', 'Projects', 'About', 'Contact'];
+  const resumeHref = '/Pratyush-Jaiswal-Resume.md';
 
   const handleNavClick = (item: string) => {
     setIsMobileMenuOpen(false);
     // Small delay so menu closes before scroll
     setTimeout(() => {
-      const el = document.getElementById(item.toLowerCase());
+      const el = document.getElementById(item.toLowerCase().replace(' ', '-'));
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }, 100);
   };
@@ -95,11 +96,11 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
           {currentView === 'home' && (
             <>
               {navItems.map((item) => {
-                const isActive = activeSection === item.toLowerCase();
+                const isActive = activeSection === item.toLowerCase().replace(' ', '-');
                 return (
                   <a
                     key={item}
-                    href={`#${item.toLowerCase()}`}
+                    href={`#${item.toLowerCase().replace(' ', '-')}`}
                     className={`relative py-1 font-mono text-xs tracking-wider transition-colors duration-300 ${
                       isActive ? 'text-[#EAEAF0]' : 'text-[#9AA0B2] hover:text-[#EAEAF0]'
                     }`}
@@ -123,6 +124,14 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
               >
                 Motion Lab
               </button>
+              <a
+                href={resumeHref}
+                download
+                className="px-4 py-2 bg-[#EAEAF0] text-[#0B0D10] rounded text-xs font-mono uppercase tracking-wider hover:bg-white transition-colors"
+                data-cursor="hover"
+              >
+                Resume
+              </a>
             </>
           )}
 
@@ -170,7 +179,7 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
               {currentView === 'home' && navItems.map((item, index) => (
                 <motion.a
                   key={item}
-                  href={`#${item.toLowerCase()}`}
+                  href={`#${item.toLowerCase().replace(' ', '-')}`}
                   onClick={() => handleNavClick(item)}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -195,6 +204,18 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
               >
                 {currentView === 'home' ? 'Motion Lab' : '← Back Home'}
               </motion.button>
+
+              <motion.a
+                href={resumeHref}
+                download
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ delay: 0.42, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="px-6 py-3 bg-[#EAEAF0] text-[#0B0D10] rounded text-sm font-mono uppercase tracking-wider font-bold"
+              >
+                Resume
+              </motion.a>
 
               <motion.div
                 initial={{ opacity: 0 }}

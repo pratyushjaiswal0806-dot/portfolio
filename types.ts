@@ -5,6 +5,9 @@ export interface Project {
   title: string;
   category: string;
   description: string;
+  role: string;
+  challenge: string;
+  impact: string;
   image: string;
   year: string;
   details: string[];

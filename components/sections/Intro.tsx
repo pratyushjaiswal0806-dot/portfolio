@@ -141,7 +141,7 @@ const Intro: React.FC = () => {
           <div className="hidden md:block w-[1px] bg-[#2D3442] h-12"></div>
 
           <div className="flex flex-col gap-2">
-            <span className="text-xs uppercase tracking-[0.2em] text-[#94A3B8] font-bold">Hackathons & Projs</span>
+            <span className="text-xs uppercase tracking-[0.2em] text-[#94A3B8] font-bold">Hackathons & Projects</span>
             <span className="text-[#EAEAF0] text-lg font-mono font-bold">
               <StatCounter value={12} suffix="+" />
             </span>

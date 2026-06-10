@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence, MotionValue } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence, MotionValue, useReducedMotion } from 'framer-motion';
 import { Project } from '../../types';
 import { X, ArrowRight, ExternalLink } from 'lucide-react';
 import techTokenImage from '../assets/tech-token-heist.png';
@@ -12,10 +12,13 @@ const projects: Project[] = [
     id: '1',
     title: 'Tech Token Heist',
     category: 'Web Application',
-    description: 'Tech Token Heist is a real-time, gamified matchmaking platform for an inter-college tech competition. Up to 24 teams (2-4 members each) will compete head-to-head in various technical domains. The platform will manage a live token economy, an automated matchmaking queue, a dynamic domain-selection wheel, phase-specific gameplay logic, and a real-time leaderboard using Supabase.',
+    description: 'Real-time gamified matchmaking platform for an inter-college tech competition with team queues, token economy flows, domain selection, gameplay phases, and a live leaderboard.',
+    role: 'Built the React interface, Supabase-backed real-time flows, matchmaking screens, gameplay state views, and leaderboard experience.',
+    challenge: 'The core challenge was keeping fast-moving game state understandable for many teams at once without making the interface feel chaotic.',
+    impact: 'Created a competition-ready product structure that can support up to 24 teams, phase-specific rules, and live event operations.',
     image: techTokenImage,
     year: '2024',
-    details: ['Real-time Matchmaking', 'Live Token Economy', 'Dynamic Gameplay'],
+    details: ['Supabase real-time channels', 'Queue and match state flows', 'Leaderboard and token views'],
     tech: ['React', 'Supabase', 'Real-time'],
     link: 'https://tech-toke-nheist.vercel.app/'
   },
@@ -23,7 +26,10 @@ const projects: Project[] = [
     id: '2',
     title: 'Fancall Frontend Development',
     category: 'Frontend Development',
-    description: 'Converted detailed Figma designs into a production-ready frontend for a celebrity-fan engagement platform. Built reusable and scalable React components following modern frontend development practices. Implemented responsive layouts ensuring consistent user experience across desktop, tablet, and mobile devices. Collaborated with designers and stakeholders to accurately translate UI/UX requirements into functional interfaces. Optimized page performance, accessibility, and responsiveness. Worked closely with backend integration requirements to support seamless user interactions.',
+    description: 'Production frontend implementation for a celebrity-fan engagement platform, translating detailed Figma screens into responsive React interfaces.',
+    role: 'Converted design files into reusable React components, handled responsive layouts, and prepared UI states for backend integration.',
+    challenge: 'The main constraint was matching polished visual details while keeping components scalable across desktop, tablet, and mobile screens.',
+    impact: 'Delivered NDA-safe frontend work with consistent layouts, cleaner component reuse, and production-focused interaction states.',
     image: fancallImage,
     year: '2024',
     details: ['Figma to React', 'Responsive Layout', 'Performance Optimization'],
@@ -34,7 +40,10 @@ const projects: Project[] = [
     id: '3',
     title: 'PromptCompiler',
     category: 'Developer Tool',
-    description: 'PromptCompiler is a local-first web workbench for analyzing and reducing LLM prompt size. It helps developers inspect token usage, remove duplicate/wasteful content, preserve critical facts (IDs, dates, URLs), and compile prompts into smaller shapes — all offline and deterministically, with optional NVIDIA NIM integration for assisted summarization.',
+    description: 'Local-first workbench for analyzing and reducing LLM prompt size while preserving important facts such as IDs, dates, URLs, and constraints.',
+    role: 'Built the prompt inspection workflow, deterministic reduction logic, fact-preservation checks, and optional NVIDIA NIM-assisted summarization path.',
+    challenge: 'Prompt compression can easily delete useful context, so the interface needed to show what changed and protect critical details.',
+    impact: 'Gives developers a local tool for reducing prompt waste before sending content to an LLM, with offline deterministic behavior by default.',
     image: promptcompilerImage,
     year: '2025',
     details: ['Token Analysis', 'Offline & Deterministic', 'NVIDIA NIM Integration'],
@@ -50,23 +59,35 @@ const Projects: React.FC = () => {
   });
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    const updateMobile = () => setIsMobile(window.innerWidth < 768);
+    updateMobile();
+    window.addEventListener('resize', updateMobile);
+    return () => window.removeEventListener('resize', updateMobile);
+  }, []);
 
   // Transform that moves the project list horizontally
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
+  const useStaticProjectList = isMobile || shouldReduceMotion;
 
   const springTransition = { type: 'spring', stiffness: 220, damping: 26 };
 
   return (
-    <section id="projects" className="relative bg-[#0B0D10] z-20" aria-label="Selected Projects by Pratyush Jaiswal">
-      {/* Scroll Trigger Container */}
-      <div ref={targetRef} className="h-[300vh] relative">
-        <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
+    <section id="projects" className={`relative bg-[#0B0D10] ${selectedId ? 'z-[60]' : 'z-20'}`} aria-label="Selected Projects by Pratyush Jaiswal">
+      <div ref={targetRef} className={useStaticProjectList ? "relative px-6 py-24" : "h-[300vh] relative"}>
+        <div className={useStaticProjectList ? "max-w-7xl mx-auto" : "sticky top-0 h-screen overflow-hidden flex flex-col justify-center"}>
 
-          <div className="px-6 md:px-24 mb-8">
+          <div className={useStaticProjectList ? "mb-8" : "px-6 md:px-24 mb-8"}>
             <h2 className="text-4xl md:text-6xl font-bold text-[#EAEAF0]">Selected Works by <span className="text-[#94A3B8]">Pratyush Jaiswal</span></h2>
           </div>
 
-          <motion.div style={{ x }} className="flex gap-12 px-6 md:px-24 w-max items-center">
+          <motion.div
+            style={useStaticProjectList ? undefined : { x }}
+            className={useStaticProjectList ? "grid grid-cols-1 gap-6" : "flex gap-12 px-6 md:px-24 w-max items-center"}
+          >
             {projects.map((project, index) => (
               <ProjectCard
                 key={project.id}
@@ -75,17 +96,18 @@ const Projects: React.FC = () => {
                 scrollYProgress={scrollYProgress}
                 total={projects.length}
                 setSelectedId={setSelectedId}
+                disableMotion={useStaticProjectList}
               />
             ))}
           </motion.div>
 
           {/* Progress Bar */}
-          <div className="absolute bottom-10 left-6 md:left-24 right-6 md:right-24 h-[1px] bg-[#2D3442] mt-12">
+          {!useStaticProjectList && <div className="absolute bottom-10 left-6 md:left-24 right-6 md:right-24 h-[1px] bg-[#2D3442] mt-12">
             <motion.div
               style={{ scaleX: scrollYProgress, transformOrigin: "left" }}
               className="h-full bg-[#94A3B8]"
             />
-          </div>
+          </div>}
         </div>
       </div>
 
@@ -106,40 +128,45 @@ const Projects: React.FC = () => {
                 key={project.id}
                 layoutId={`card-container-${project.id}`}
                 transition={springTransition}
-                className="relative w-full max-w-5xl max-h-[90vh] bg-[#141821] rounded-2xl overflow-y-auto overflow-x-hidden scrollbar-hide border border-[#2D3442] z-10 shadow-2xl"
+                className="relative w-full max-w-5xl max-h-[90vh] bg-[#141821] rounded-2xl border border-[#2D3442] z-10 shadow-2xl flex flex-col overflow-hidden"
               >
-                <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
-                  {/* Ken Burns zoom animation */}
-                  <motion.img
-                    layoutId={`image-${project.id}`}
-                    src={project.image}
-                    alt={`${project.title} — project by Pratyush Jaiswal`}
-                    className="w-full h-full object-cover"
-                    animate={{ scale: 1.05 }}
-                    transition={{
-                      layout: springTransition,
-                      scale: { duration: 15, ease: "easeOut", repeat: Infinity, repeatType: "reverse" }
-                    }}
-                    loading="lazy"
-                    width="1200"
-                    height="675"
-                  />
-                  <div className="absolute top-4 right-4 z-20">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setSelectedId(null); }}
-                      className="p-3 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
+                {/* Fixed Close Button */}
+                <div className="absolute top-4 right-4 z-50">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSelectedId(null); }}
+                    className="p-3 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors backdrop-blur-md border border-white/10 shadow-lg"
+                    aria-label="Close details"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
 
-                <motion.div
-                  className="p-8 md:p-12 bg-[#141821]"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.5 }}
-                >
+                {/* Scrollable Content Container */}
+                <div className="w-full flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide">
+                  <div className="relative h-[30vh] md:h-[35vh] w-full overflow-hidden">
+                    {/* Ken Burns zoom animation */}
+                    <motion.img
+                      layoutId={`image-${project.id}`}
+                      src={project.image}
+                      alt={`${project.title} — project by Pratyush Jaiswal`}
+                      className="w-full h-full object-cover object-top"
+                      animate={{ scale: 1.05 }}
+                      transition={{
+                        layout: springTransition,
+                        scale: { duration: 15, ease: "easeOut", repeat: Infinity, repeatType: "reverse" }
+                      }}
+                      loading="lazy"
+                      width="1200"
+                      height="675"
+                    />
+                  </div>
+
+                  <motion.div
+                    className="p-8 md:p-12 bg-[#141821]"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                  >
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
                     <div className="flex-1">
                       <motion.p layoutId={`cat-${project.id}`} transition={springTransition} className="text-[#94A3B8] font-mono text-sm uppercase tracking-widest mb-3">{project.category}</motion.p>
@@ -172,9 +199,20 @@ const Projects: React.FC = () => {
                         </h4>
                         <p className="text-[#9AA0B2] leading-relaxed text-lg font-light">
                           {project.description}
-                          <br /><br />
-                          This project was conceived with a focus on modularity and scalability. By implementing a component-driven architecture, we ensured that the design system could evolve without technical debt. The interface prioritizes clarity, using whitespace and typographic hierarchy to guide the user's journey.
                         </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-6">
+                        {[
+                          ['Role', project.role],
+                          ['Technical Challenge', project.challenge],
+                          ['Result', project.impact]
+                        ].map(([label, value]) => (
+                          <div key={label} className="border-l border-[#2D3442] pl-5">
+                            <h4 className="text-xs font-mono text-[#94A3B8] uppercase tracking-widest mb-2">{label}</h4>
+                            <p className="text-[#9AA0B2] leading-relaxed">{value}</p>
+                          </div>
+                        ))}
                       </div>
 
                       <div>
@@ -225,8 +263,9 @@ const Projects: React.FC = () => {
                     </div>
                   </div>
                 </motion.div>
-              </motion.div>
-            ))}
+              </div>
+            </motion.div>
+          ))}
           </div>
         )}
       </AnimatePresence>
@@ -241,7 +280,8 @@ const ProjectCard: React.FC<{
   scrollYProgress: MotionValue<number>;
   total: number;
   setSelectedId: (id: string) => void;
-}> = ({ project, index, scrollYProgress, total, setSelectedId }) => {
+  disableMotion?: boolean;
+}> = ({ project, index, scrollYProgress, total, setSelectedId, disableMotion = false }) => {
   const step = 1 / total;
   const start = index * step;
   const end = start + step;
@@ -269,9 +309,9 @@ const ProjectCard: React.FC<{
       layoutId={`card-container-${project.id}`}
       transition={springTransition}
       onClick={() => setSelectedId(project.id)}
-      style={{ scale, opacity, filter }}
+      style={disableMotion ? { scale: 1, opacity: 1, filter: "none" } : { scale, opacity, filter }}
       data-cursor="project-card"
-      className="relative w-[80vw] md:w-[600px] h-[50vh] md:h-[60vh] bg-[#141821] rounded-2xl overflow-hidden cursor-pointer group border border-[#2D3442] flex-shrink-0"
+      className="relative w-full md:w-[600px] h-[430px] md:h-[60vh] bg-[#141821] rounded-2xl overflow-hidden cursor-pointer group border border-[#2D3442] flex-shrink-0"
     >
       <motion.img
         layoutId={`image-${project.id}`}

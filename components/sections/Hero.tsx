@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate, AnimatePresence, useVelocity, useReducedMotion } from 'framer-motion';
-import { ArrowDown, Terminal, Wifi, Battery, Disc } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import Magnetic from '../ui/Magnetic';
+import pratyushImg from '../assets/pratyush.jpg';
 
 // Easing for mechanical/architectural feel (expo.out)
 const MECHANICAL_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -123,7 +124,7 @@ const Hero: React.FC = () => {
           />
         </div>
 
-        {/* RIGHT COLUMN: System Panel (Desktop Only) */}
+        {/* RIGHT COLUMN: Hero Image (Desktop Only) */}
         <motion.div 
           style={{ 
             x: panelParallaxX, 
@@ -133,7 +134,7 @@ const Hero: React.FC = () => {
           }}
           className="lg:col-span-5 hidden lg:flex justify-end perspective-1000"
         >
-          <SystemPanel />
+          <HeroImage />
         </motion.div>
       </div>
 
@@ -370,7 +371,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
       {/* Name & Role — H1 with gradient sweep */}
       <div className="mb-6">
         <h1
-          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1] mb-2 cursor-none origin-left relative whitespace-nowrap gradient-sweep"
+          className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight leading-[1] mb-2 cursor-none origin-left relative whitespace-nowrap gradient-sweep"
           data-cursor="hero-text"
           aria-label="Pratyush Jaiswal"
           onMouseEnter={() => onNameHoverChange(true)}
@@ -384,7 +385,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
         </h1>
         <motion.div 
           variants={roleAnim} 
-          className="text-3xl md:text-5xl lg:text-6xl flex flex-wrap items-baseline cursor-none"
+          className="text-2xl md:text-3xl lg:text-5xl flex flex-wrap items-baseline cursor-none"
           data-cursor="text-hover"
         >
           <span className="text-[#9AA0B2] opacity-30 font-medium mr-2 tracking-wide">is a</span>
@@ -435,144 +436,36 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
   );
 };
 
-// 6. System Panel (Right Side) - Terminal Upgrade with Typewriter Logs
-const SystemPanel = () => {
-  const [logs, setLogs] = useState<string[]>([]);
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    const messages = [
-      "INITIALIZING KERNEL...",
-      "LOADING SYSTEM MODULES...",
-      "COMPILING PORTFOLIO SOURCE...",
-      "LINKING DEPENDENCIES...",
-      "RUNNING PERFORMANCE SUITE...",
-      "ALL SYSTEMS OPTIMIZED.",
-      "SYSTEM READY."
-    ];
-
-    let msgIndex = 0;
-    let charIndex = 0;
-    let currentLineText = "";
-
-    const typeNextChar = () => {
-      if (msgIndex >= messages.length) {
-        setIsReady(true);
-        return;
-      }
-
-      const fullMessage = messages[msgIndex];
-
-      if (charIndex === 0) {
-        currentLineText = "> ";
-      }
-
-      currentLineText += fullMessage[charIndex];
-      charIndex++;
-
-      setLogs(prev => {
-        if (charIndex === 1) {
-          // Add a new line
-          return [...prev.slice(-6), currentLineText];
-        } else {
-          // Update the current line
-          const nextLogs = [...prev];
-          nextLogs[nextLogs.length - 1] = currentLineText;
-          return nextLogs;
-        }
-      });
-
-      if (charIndex < fullMessage.length) {
-        setTimeout(typeNextChar, Math.random() * 20 + 10);
-      } else {
-        // Line finished, prepare for next line
-        msgIndex++;
-        charIndex = 0;
-        setTimeout(typeNextChar, Math.random() * 200 + 100);
-      }
-    };
-
-    const startupTimeout = setTimeout(typeNextChar, 800);
-    return () => clearTimeout(startupTimeout);
-  }, []);
+// 6. Hero Image (Right Side)
+const HeroImage = () => {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
-      animate={isReady ? { 
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ 
         opacity: 1, 
-        scale: 1, 
-        filter: "blur(0px)",
-        boxShadow: "0 0 30px rgba(148, 163, 184, 0.05)"
-      } : { 
-        opacity: 1, 
-        scale: 1, 
-        filter: "blur(0px)" 
+        y: 0,
+        boxShadow: isHovered ? "0 20px 40px rgba(0,0,0,0.4)" : "0 10px 30px rgba(0,0,0,0.2)"
       }}
       transition={{ delay: 0.6, duration: 1, ease: MECHANICAL_EASE }}
-      className="relative w-80 h-96 border border-[#2D3442] bg-[#0B0D10]/95 backdrop-blur-md rounded-lg overflow-hidden group hover:border-[#94A3B8] transition-all duration-500 flex flex-col"
+      className="relative w-full max-w-[22rem] md:max-w-[26rem] aspect-[3/4] overflow-hidden group flex justify-center items-center bg-[#0B0D10] rounded-sm"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Header */}
-      <div className="flex justify-between items-center p-3 border-b border-[#2D3442] bg-[#141821]/50">
-        <div className="flex items-center gap-2">
-          <Terminal className="w-3 h-3 text-[#94A3B8]" />
-          <span className="text-[10px] font-mono text-[#94A3B8] tracking-wider">TERMINAL_01</span>
-        </div>
-        <div className="flex items-center gap-2">
-             <div className="w-2 h-2 rounded-full bg-red-500/20"></div>
-             <div className="w-2 h-2 rounded-full bg-yellow-500/20"></div>
-             <div className="w-2 h-2 rounded-full bg-green-500/80 animate-pulse"></div>
-        </div>
-      </div>
-
-      {/* Terminal Body */}
-      <div className="flex-1 p-4 font-mono text-[10px] text-[#9AA0B2] flex flex-col justify-end">
-          <div className="space-y-1.5">
-            {logs.map((log, i) => {
-                const isReadyMsg = log.includes("SYSTEM READY");
-                return (
-                  <motion.div 
-                      key={i} 
-                      initial={{ opacity: 0, x: -6 }} 
-                      animate={{ opacity: 1, x: 0 }}
-                      className="flex"
-                  >
-                      <span className="mr-2 text-[#555A6B]">{new Date().toLocaleTimeString('en-US', {hour12: false, hour: '2-digit', minute:'2-digit', second: '2-digit'})}</span>
-                      <motion.span 
-                        className={isReadyMsg ? "text-green-400 font-bold" : "text-[#94A3B8]"}
-                        animate={isReadyMsg ? { scale: [1, 1.05, 1] } : {}}
-                        transition={isReadyMsg ? { repeat: Infinity, duration: 2, ease: "easeInOut" } : {}}
-                      >
-                        {log}
-                      </motion.span>
-                  </motion.div>
-                );
-            })}
-            
-            {/* Blinking Cursor */}
-            <motion.div 
-                animate={{ opacity: [0, 1, 0] }} 
-                transition={{ duration: 0.8, repeat: Infinity }}
-                className="w-1.5 h-3 bg-[#94A3B8] mt-1"
-            />
-          </div>
-      </div>
-
-      {/* Bottom Status Bar */}
-      <div className="p-2 border-t border-[#2D3442] grid grid-cols-3 gap-2">
-          <div className="bg-[#141821] p-1.5 rounded flex items-center justify-center gap-2 text-[#555A6B]">
-              <Wifi size={10} />
-              <span className="text-[9px] font-mono">ONLINE</span>
-          </div>
-          <div className="bg-[#141821] p-1.5 rounded flex items-center justify-center gap-2 text-[#555A6B]">
-              <Disc size={10} />
-              <span className="text-[9px] font-mono">64GB</span>
-          </div>
-          <div className="bg-[#141821] p-1.5 rounded flex items-center justify-center gap-2 text-[#555A6B]">
-              <Battery size={10} />
-              <span className="text-[9px] font-mono">PWR</span>
-          </div>
-      </div>
+      <motion.img
+        src={pratyushImg}
+        alt="Pratyush Jaiswal"
+        className="w-full h-full object-cover origin-center"
+        animate={{ 
+          scale: isHovered ? 1.35 : 1.25,
+          filter: isHovered ? "brightness(1.05)" : "brightness(0.95)",
+        }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      />
+      
+      {/* Very subtle overlay to blend with dark mode */}
+      <div className="absolute inset-0 bg-[#0B0D10] opacity-10 group-hover:opacity-0 transition-opacity duration-500 pointer-events-none" />
     </motion.div>
   );
 };

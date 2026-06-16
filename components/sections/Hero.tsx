@@ -81,7 +81,7 @@ const Hero: React.FC = () => {
   const maskImage = useMotionTemplate`radial-gradient(${smoothMaskRadius}px circle at ${mouseX}px ${mouseY}px, black, transparent)`;
 
   return (
-    <section ref={containerRef} className="relative h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0B0D10]">
+    <section ref={containerRef} className="relative min-h-screen lg:h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0B0D10] py-20 lg:py-0">
       
       {/* LAYER 0: Deep/Background Grid */}
       <motion.div 
@@ -124,7 +124,7 @@ const Hero: React.FC = () => {
           />
         </div>
 
-        {/* RIGHT COLUMN: Hero Image (Desktop Only) */}
+        {/* RIGHT COLUMN: Hero Image */}
         <motion.div 
           style={{ 
             x: panelParallaxX, 
@@ -132,7 +132,7 @@ const Hero: React.FC = () => {
             rotateX: useTransform(smoothMouseY, [0, 1000], [5, -5]), 
             rotateY: useTransform(smoothMouseX, [0, 1000], [-5, 5]) 
           }}
-          className="lg:col-span-5 hidden lg:flex justify-end perspective-1000"
+          className="lg:col-span-5 flex justify-center lg:justify-end perspective-1000 mt-12 lg:mt-0"
         >
           <HeroImage />
         </motion.div>

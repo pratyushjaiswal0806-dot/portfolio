@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform, useInView, useMotionValue, useMotionTemplate, useSpring } from 'framer-motion';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { motion, useInView, useMotionValue, useMotionTemplate, useSpring } from 'framer-motion';
 
 import tsLogo from '../assets/icons8-typescript.svg';
 import jsLogo from '../assets/icons8-javascript.svg';
@@ -17,14 +17,13 @@ import supabaseLogo from '../assets/Supabase-Icon--Streamline-Svg-Logos.svg';
 
 interface TechItem {
   name: string;
-  slug: string; // Used for Simple Icons CDN
-  color: string; // Brand color for custom glow on hover
-  customSvg?: string; // Optional custom SVG if Simple Icons is not perfect
-  asset?: string; // Local asset if available
+  slug: string;
+  color: string;
+  customSvg?: string;
+  asset?: string;
 }
 
-const techItems: TechItem[] = [
-  // Row 1
+const initialTechItems: TechItem[] = [
   { name: 'TypeScript', slug: 'typescript', color: '#3178C6', asset: tsLogo },
   { name: 'JavaScript', slug: 'javascript', color: '#F7DF1E', asset: jsLogo },
   { name: 'Python', slug: 'python', color: '#3776AB', asset: pyLogo },
@@ -39,8 +38,6 @@ const techItems: TechItem[] = [
   { name: 'MongoDB', slug: 'mongodb', color: '#47A248' },
   { name: 'MySQL', slug: 'mysql', color: '#4479A1' },
   { name: 'Figma', slug: 'figma', color: '#F24E1E', asset: figmaLogo },
-  
-  // Row 2
   { name: 'Postman', slug: 'postman', color: '#FF6C37', asset: postmanLogo },
   { name: 'Nginx', slug: 'nginx', color: '#009639' },
   { name: 'Bun', slug: 'bun', color: '#F9F1E7' },
@@ -51,8 +48,10 @@ const TechStack: React.FC = () => {
   const containerRef = useRef<HTMLElement>(null);
   const isInView = useInView(containerRef, { amount: 0.2, once: false });
   const [hoveredTech, setHoveredTech] = useState<TechItem | null>(null);
+  const [techItems, setTechItems] = useState<TechItem[]>(initialTechItems);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
-  // Mouse tracking for grid spotlight
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -68,6 +67,15 @@ const TechStack: React.FC = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
 
+  const handleSwap = useCallback((fromIndex: number, toIndex: number) => {
+    setTechItems(prev => {
+      const updated = [...prev];
+      const [removed] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, removed);
+      return updated;
+    });
+  }, []);
+
   return (
     <section
       id="tech-stack"
@@ -75,12 +83,9 @@ const TechStack: React.FC = () => {
       className="py-32 px-6 md:px-24 bg-[#0B0D10] relative z-20 overflow-hidden min-h-[70vh] flex flex-col justify-center"
       aria-label="Technology Stack of Pratyush Jaiswal"
     >
-      {/* Background Grid & Spotlight */}
       <SkillsGrid isActive={isInView} mouseX={mouseX} mouseY={mouseY} />
 
       <div className="max-w-7xl mx-auto w-full relative z-10">
-        
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
           <div>
             <motion.div
@@ -122,24 +127,31 @@ const TechStack: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Logos Container */}
         <motion.div
+          layout
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex flex-wrap gap-8 md:gap-12 justify-center items-center py-12"
         >
-          {techItems.map((tech) => (
+          {techItems.map((tech, index) => (
             <TechIcon
               key={tech.name}
               tech={tech}
+              index={index}
               isHovered={hoveredTech?.name === tech.name}
+              isDragged={draggedIndex === index}
+              isDragOver={dragOverIndex === index && draggedIndex !== index}
+              currentDragOverIndex={dragOverIndex}
               onHoverStart={() => setHoveredTech(tech)}
               onHoverEnd={() => setHoveredTech(null)}
+              onDragStart={setDraggedIndex}
+              onDragOver={setDragOverIndex}
+              onSwap={handleSwap}
+              totalItems={techItems.length}
             />
           ))}
         </motion.div>
-
       </div>
     </section>
   );
@@ -147,32 +159,38 @@ const TechStack: React.FC = () => {
 
 interface TechIconProps {
   tech: TechItem;
+  index: number;
   isHovered: boolean;
+  isDragged: boolean;
+  isDragOver: boolean;
+  currentDragOverIndex: number | null;
   onHoverStart: () => void;
   onHoverEnd: () => void;
+  onDragStart: (index: number | null) => void;
+  onDragOver: (index: number | null) => void;
+  onSwap: (fromIndex: number, toIndex: number) => void;
+  totalItems: number;
 }
 
-const TechIcon: React.FC<TechIconProps> = ({ tech, isHovered, onHoverStart, onHoverEnd }) => {
+const TechIcon: React.FC<TechIconProps> = ({
+  tech, index, isHovered, isDragged, isDragOver, currentDragOverIndex,
+  onHoverStart, onHoverEnd, onDragStart, onDragOver, onSwap, totalItems
+}) => {
   const ref = useRef<HTMLDivElement>(null);
-  
-  // Magnetic Effect Logic
+
+  // Magnetic Effect
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  
   const springConfig = { damping: 15, stiffness: 150, mass: 0.1 };
   const springX = useSpring(x, springConfig);
   const springY = useSpring(y, springConfig);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (!ref.current || isDragged) return;
     const { clientX, clientY } = e;
     const { width, height, left, top } = ref.current.getBoundingClientRect();
-    
-    // Calculate distance from center of the icon
     const centerX = left + width / 2;
     const centerY = top + height / 2;
-    
-    // Magnetic pull intensity (adjustable)
     x.set((clientX - centerX) * 0.4);
     y.set((clientY - centerY) * 0.4);
   };
@@ -183,7 +201,6 @@ const TechIcon: React.FC<TechIconProps> = ({ tech, isHovered, onHoverStart, onHo
     onHoverEnd();
   };
 
-  // Use local asset if available, else fallback to CDN
   const iconUrl = tech.asset || (tech.slug === 'java'
     ? 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg'
     : `https://cdn.simpleicons.org/${tech.slug}/${tech.slug === 'nextdotjs' || tech.slug === 'github' || tech.slug === 'shadcnui' ? 'ffffff' : tech.color.replace('#', '')}`);
@@ -191,30 +208,84 @@ const TechIcon: React.FC<TechIconProps> = ({ tech, isHovered, onHoverStart, onHo
   return (
     <motion.div
       ref={ref}
+      layout
+      drag
+      dragSnapToOrigin
+      dragElastic={0.1}
+      dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
+      onDragStart={() => onDragStart(index)}
+      onDrag={(e: any, info: any) => {
+        if (!ref.current) return;
+        const el = ref.current;
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        const container = el.closest('.flex.flex-wrap');
+        if (!container) return;
+        const children = Array.from(container.children) as HTMLElement[];
+
+        let closestIdx: number | null = null;
+        let closestDist = Infinity;
+
+        children.forEach((child, i) => {
+          if (i === index || i >= totalItems) return;
+          const r = child.getBoundingClientRect();
+          const childCx = r.left + r.width / 2;
+          const childCy = r.top + r.height / 2;
+          const dist = Math.hypot(cx - childCx, cy - childCy);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestIdx = i;
+          }
+        });
+
+        onDragOver(closestIdx);
+      }}
+      onDragEnd={() => {
+        if (currentDragOverIndex !== null && currentDragOverIndex !== index) {
+          onSwap(index, currentDragOverIndex);
+        }
+        onDragStart(null);
+        onDragOver(null);
+      }}
       onMouseEnter={onHoverStart}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      whileHover={{ scale: 1.15 }}
-      className="relative w-12 h-12 md:w-16 md:h-16 flex items-center justify-center cursor-pointer z-10"
+      whileHover={!isDragged ? { scale: 1.15 } : undefined}
+      whileDrag={{ scale: 1.2, zIndex: 50, cursor: 'grabbing' }}
+      animate={isDragOver ? { scale: 1.1, transition: { duration: 0.15 } } : undefined}
+      className="relative w-12 h-12 md:w-16 md:h-16 flex items-center justify-center cursor-grab active:cursor-grabbing z-10"
       style={{
-        x: springX,
-        y: springY,
-        filter: isHovered
+        x: isDragged ? undefined : springX,
+        y: isDragged ? undefined : springY,
+        filter: isHovered || isDragged
           ? `drop-shadow(0 0 15px ${tech.color}60)`
-          : 'none',
+          : isDragOver
+            ? `drop-shadow(0 0 20px ${tech.color}90)`
+            : 'none',
+        opacity: isDragged ? 0.8 : 1,
+        zIndex: isDragged ? 50 : isDragOver ? 40 : 10,
       }}
     >
       <img
         src={iconUrl}
         alt={`${tech.name} logo`}
-        className="w-full h-full object-contain transition-all duration-300 filter"
+        className="w-full h-full object-contain transition-all duration-300 filter pointer-events-none"
         style={{
-          filter: isHovered ? 'grayscale(0%)' : 'grayscale(30%) opacity(75%)',
+          filter: isHovered || isDragged ? 'grayscale(0%)' : 'grayscale(30%) opacity(75%)',
         }}
         onError={(e) => {
-          // Fallback if image fails to load
-          e.currentTarget.style.display = 'none';
+          const currentSrc = e.currentTarget.src;
+          if (currentSrc.includes('cdn.simpleicons.org')) {
+            e.currentTarget.src = `https://unpkg.com/simple-icons@latest/icons/${tech.slug}.svg`;
+          } else if (currentSrc.includes('unpkg.com')) {
+            e.currentTarget.src = `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${tech.slug}.svg`;
+          } else {
+            e.currentTarget.style.display = 'none';
+          }
         }}
+        draggable={false}
       />
     </motion.div>
   );

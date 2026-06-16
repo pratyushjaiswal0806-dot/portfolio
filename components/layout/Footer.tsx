@@ -4,7 +4,7 @@ import { Github, Linkedin, Mail, ArrowUp, ExternalLink, FileDown } from 'lucide-
 import { PREMIUM_EASE, fadeUp } from '../ui/motion';
 
 const Footer: React.FC = () => {
-  const resumeHref = '/Pratyush-Jaiswal-Resume.md';
+  const resumeHref = '/Pratyush.Jaiswal.pdf';
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

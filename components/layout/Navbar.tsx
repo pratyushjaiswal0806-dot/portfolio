@@ -53,7 +53,7 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
   }, []);
 
   const navItems = ['Tech Stack', 'Projects', 'About', 'Contact'];
-  const resumeHref = '/Pratyush-Jaiswal-Resume.md';
+  const resumeHref = '/Pratyush.Jaiswal.pdf';
 
   const handleNavClick = (item: string) => {
     setIsMobileMenuOpen(false);

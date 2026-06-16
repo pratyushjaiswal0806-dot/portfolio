@@ -12,7 +12,7 @@ const channels = [
   { icon: Phone, label: 'Phone', value: '+91 877 095 3990', href: 'tel:+918770953990', external: false },
 ];
 
-const resumeHref = '/Pratyush-Jaiswal-Resume.md';
+const resumeHref = '/Pratyush.Jaiswal.pdf';
 
 const Contact: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);

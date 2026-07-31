@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, useInView, useMotionValue, useMotionTemplate, useSpring } from 'framer-motion';
+import { ExternalLink } from 'lucide-react';
 
 import tsLogo from '../assets/icons8-typescript.svg';
 import jsLogo from '../assets/icons8-javascript.svg';
@@ -19,29 +20,30 @@ interface TechItem {
   name: string;
   slug: string;
   color: string;
+  url: string;
   customSvg?: string;
   asset?: string;
 }
 
 const initialTechItems: TechItem[] = [
-  { name: 'TypeScript', slug: 'typescript', color: '#3178C6', asset: tsLogo },
-  { name: 'JavaScript', slug: 'javascript', color: '#F7DF1E', asset: jsLogo },
-  { name: 'Python', slug: 'python', color: '#3776AB', asset: pyLogo },
-  { name: 'Java', slug: 'java', color: '#ED8B00', asset: javaLogo },
-  { name: 'Node.js', slug: 'nodedotjs', color: '#5FA04E', asset: nodeLogo },
-  { name: 'React', slug: 'react', color: '#61DAFB', asset: reactLogo },
-  { name: 'Next.js', slug: 'nextdotjs', color: '#FFFFFF' },
-  { name: 'Tailwind CSS', slug: 'tailwindcss', color: '#06B6D4', asset: tailwindLogo },
-  { name: 'Express', slug: 'express', color: '#EAEAF0', asset: expressLogo },
-  { name: 'Git', slug: 'git', color: '#F05032', asset: gitLogo },
-  { name: 'GitHub', slug: 'github', color: '#FFFFFF', asset: githubLogo },
-  { name: 'MongoDB', slug: 'mongodb', color: '#47A248' },
-  { name: 'MySQL', slug: 'mysql', color: '#4479A1' },
-  { name: 'Figma', slug: 'figma', color: '#F24E1E', asset: figmaLogo },
-  { name: 'Postman', slug: 'postman', color: '#FF6C37', asset: postmanLogo },
-  { name: 'Nginx', slug: 'nginx', color: '#009639' },
-  { name: 'Bun', slug: 'bun', color: '#F9F1E7' },
-  { name: 'Supabase', slug: 'supabase', color: '#3ECF8E', asset: supabaseLogo }
+  { name: 'TypeScript', slug: 'typescript', color: '#3178C6', asset: tsLogo, url: 'https://www.typescriptlang.org/' },
+  { name: 'JavaScript', slug: 'javascript', color: '#F7DF1E', asset: jsLogo, url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript' },
+  { name: 'Python', slug: 'python', color: '#3776AB', asset: pyLogo, url: 'https://www.python.org/' },
+  { name: 'Java', slug: 'java', color: '#ED8B00', asset: javaLogo, url: 'https://dev.java/' },
+  { name: 'Node.js', slug: 'nodedotjs', color: '#5FA04E', asset: nodeLogo, url: 'https://nodejs.org/' },
+  { name: 'React', slug: 'react', color: '#61DAFB', asset: reactLogo, url: 'https://react.dev/' },
+  { name: 'Next.js', slug: 'nextdotjs', color: '#FFFFFF', url: 'https://nextjs.org/' },
+  { name: 'Tailwind CSS', slug: 'tailwindcss', color: '#06B6D4', asset: tailwindLogo, url: 'https://tailwindcss.com/' },
+  { name: 'Express', slug: 'express', color: '#EAEAF0', asset: expressLogo, url: 'https://expressjs.com/' },
+  { name: 'Git', slug: 'git', color: '#F05032', asset: gitLogo, url: 'https://git-scm.com/' },
+  { name: 'GitHub', slug: 'github', color: '#FFFFFF', asset: githubLogo, url: 'https://github.com/' },
+  { name: 'MongoDB', slug: 'mongodb', color: '#47A248', url: 'https://www.mongodb.com/' },
+  { name: 'MySQL', slug: 'mysql', color: '#4479A1', url: 'https://www.mysql.com/' },
+  { name: 'Figma', slug: 'figma', color: '#F24E1E', asset: figmaLogo, url: 'https://www.figma.com/' },
+  { name: 'Postman', slug: 'postman', color: '#FF6C37', asset: postmanLogo, url: 'https://www.postman.com/' },
+  { name: 'Nginx', slug: 'nginx', color: '#009639', url: 'https://nginx.org/' },
+  { name: 'Bun', slug: 'bun', color: '#F9F1E7', url: 'https://bun.sh/' },
+  { name: 'Supabase', slug: 'supabase', color: '#3ECF8E', asset: supabaseLogo, url: 'https://supabase.com/' }
 ];
 
 const TechStack: React.FC = () => {
@@ -94,7 +96,7 @@ const TechStack: React.FC = () => {
               transition={{ duration: 0.4 }}
             >
               <span className="text-[#94A3B8] font-mono uppercase tracking-widest text-xs">
-                {hoveredTech ? `[ Active Module: ${hoveredTech.name.toUpperCase()} ]` : '[ Hover an icon to scan ]'}
+                {hoveredTech ? `[ Active Module: ${hoveredTech.name.toUpperCase()} — Click icon to visit website ]` : '[ Hover icon to scan | Click icon to visit homepage | Drag to reorder ]'}
               </span>
             </motion.div>
 
@@ -105,9 +107,17 @@ const TechStack: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.12 }}
             >
               {hoveredTech ? (
-                <span style={{ color: hoveredTech.color }} className="transition-colors duration-300">
-                  {hoveredTech.name}
-                </span>
+                <a
+                  href={hoveredTech.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: hoveredTech.color }}
+                  className="transition-colors duration-300 inline-flex items-center gap-2.5 hover:underline cursor-pointer group"
+                  title={`Visit ${hoveredTech.name} homepage`}
+                >
+                  <span>{hoveredTech.name}</span>
+                  <ExternalLink className="w-6 h-6 inline-block opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200" />
+                </a>
               ) : (
                 <>
                   My <span className="text-[#94A3B8]">Tech Stack</span>
@@ -177,6 +187,7 @@ const TechIcon: React.FC<TechIconProps> = ({
   onHoverStart, onHoverEnd, onDragStart, onDragOver, onSwap, totalItems
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
 
   // Magnetic Effect
   const x = useMotionValue(0);
@@ -201,6 +212,13 @@ const TechIcon: React.FC<TechIconProps> = ({
     onHoverEnd();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.key === 'Enter' || e.key === ' ') && tech.url) {
+      e.preventDefault();
+      window.open(tech.url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   const iconUrl = tech.asset || (tech.slug === 'java'
     ? 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg'
     : `https://cdn.simpleicons.org/${tech.slug}/${tech.slug === 'nextdotjs' || tech.slug === 'github' || tech.slug === 'shadcnui' ? 'ffffff' : tech.color.replace('#', '')}`);
@@ -213,7 +231,10 @@ const TechIcon: React.FC<TechIconProps> = ({
       dragSnapToOrigin
       dragElastic={0.1}
       dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-      onDragStart={() => onDragStart(index)}
+      onDragStart={() => {
+        isDraggingRef.current = true;
+        onDragStart(index);
+      }}
       onDrag={(e: any, info: any) => {
         if (!ref.current) return;
         const el = ref.current;
@@ -243,19 +264,32 @@ const TechIcon: React.FC<TechIconProps> = ({
         onDragOver(closestIdx);
       }}
       onDragEnd={() => {
+        setTimeout(() => {
+          isDraggingRef.current = false;
+        }, 150);
         if (currentDragOverIndex !== null && currentDragOverIndex !== index) {
           onSwap(index, currentDragOverIndex);
         }
         onDragStart(null);
         onDragOver(null);
       }}
+      onTap={() => {
+        if (!isDraggingRef.current && tech.url) {
+          window.open(tech.url, '_blank', 'noopener,noreferrer');
+        }
+      }}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+      aria-label={`Visit official ${tech.name} website (opens in new tab)`}
+      title={`Click to visit ${tech.name} official website (${tech.url})`}
       onMouseEnter={onHoverStart}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       whileHover={!isDragged ? { scale: 1.15 } : undefined}
       whileDrag={{ scale: 1.2, zIndex: 50, cursor: 'grabbing' }}
       animate={isDragOver ? { scale: 1.1, transition: { duration: 0.15 } } : undefined}
-      className="relative w-12 h-12 md:w-16 md:h-16 flex items-center justify-center cursor-grab active:cursor-grabbing z-10"
+      className="relative w-12 h-12 md:w-16 md:h-16 flex items-center justify-center cursor-pointer active:cursor-grabbing z-10 focus:outline-none focus:ring-2 focus:ring-[#94A3B8] rounded-xl"
       style={{
         x: isDragged ? undefined : springX,
         y: isDragged ? undefined : springY,
@@ -322,3 +356,4 @@ const SkillsGrid = ({ isActive, mouseX, mouseY }: { isActive: boolean, mouseX: a
 };
 
 export default TechStack;
+

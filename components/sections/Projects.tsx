@@ -17,7 +17,7 @@ const projects: Project[] = [
     challenge: 'The core challenge was keeping fast-moving game state understandable for many teams at once without making the interface feel chaotic.',
     impact: 'Created a competition-ready product structure that can support up to 24 teams, phase-specific rules, and live event operations.',
     image: techTokenImage,
-    year: '2024',
+    year: '2026',
     details: ['Supabase real-time channels', 'Queue and match state flows', 'Leaderboard and token views'],
     tech: ['React', 'Supabase', 'Real-time'],
     link: 'https://tech-toke-nheist.vercel.app/'
@@ -31,7 +31,7 @@ const projects: Project[] = [
     challenge: 'The main constraint was matching polished visual details while keeping components scalable across desktop, tablet, and mobile screens.',
     impact: 'Delivered NDA-safe frontend work with consistent layouts, cleaner component reuse, and production-focused interaction states.',
     image: fancallImage,
-    year: '2024',
+    year: '2026',
     details: ['Figma to React', 'Responsive Layout', 'Performance Optimization'],
     tech: ['React', 'TypeScript', 'Tailwind'],
     nda: true
@@ -45,7 +45,7 @@ const projects: Project[] = [
     challenge: 'Prompt compression can easily delete useful context, so the interface needed to show what changed and protect critical details.',
     impact: 'Gives developers a local tool for reducing prompt waste before sending content to an LLM, with offline deterministic behavior by default.',
     image: promptcompilerImage,
-    year: '2025',
+    year: '2026',
     details: ['Token Analysis', 'Offline & Deterministic', 'NVIDIA NIM Integration'],
     tech: ['React', 'TypeScript', 'LLM'],
     link: 'https://github.com/pratyushjaiswal0806-dot/promp-t.git'
@@ -167,105 +167,105 @@ const Projects: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                   >
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
-                    <div className="flex-1">
-                      <motion.p layoutId={`cat-${project.id}`} transition={springTransition} className="text-[#94A3B8] font-mono text-sm uppercase tracking-widest mb-3">{project.category}</motion.p>
-                      <motion.h3 layoutId={`title-${project.id}`} transition={springTransition} className="text-4xl md:text-6xl font-bold text-white tracking-tight">{project.title}</motion.h3>
-                    </div>
-                    <div className="flex gap-2 shrink-0">
-                      {project.link ? (
-                        <a href={project.link} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-[#EAEAF0] text-[#0B0D10] rounded-full font-medium hover:bg-white transition-colors flex items-center gap-2 text-sm tracking-wide whitespace-nowrap">
-                          Live Demo <ExternalLink size={16} />
-                        </a>
-                      ) : project.nda ? (
-                        <span className="px-6 py-3 bg-[#2D3442] text-[#9AA0B2] rounded-full font-medium flex items-center gap-2 text-sm tracking-wide whitespace-nowrap cursor-not-allowed" title="Link unavailable due to Non-Disclosure Agreement">
-                          Under NDA
-                        </span>
-                      ) : (
-                        <a href="#" className="px-6 py-3 bg-[#EAEAF0] text-[#0B0D10] rounded-full font-medium hover:bg-white transition-colors flex items-center gap-2 text-sm tracking-wide whitespace-nowrap">
-                          Live Demo <ExternalLink size={16} />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-12 gap-12">
-                    {/* Main Content */}
-                    <div className="md:col-span-8 space-y-12">
-                      <div>
-                        <h4 className="text-[#EAEAF0] font-medium text-xl mb-6 flex items-center gap-3">
-                          <span className="w-8 h-[1px] bg-[#94A3B8]"></span>
-                          Project Overview
-                        </h4>
-                        <p className="text-[#9AA0B2] leading-relaxed text-lg font-light">
-                          {project.description}
-                        </p>
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+                      <div className="flex-1">
+                        <motion.p layoutId={`cat-${project.id}`} transition={springTransition} className="text-[#94A3B8] font-mono text-sm uppercase tracking-widest mb-3">{project.category}</motion.p>
+                        <motion.h3 layoutId={`title-${project.id}`} transition={springTransition} className="text-4xl md:text-6xl font-bold text-white tracking-tight">{project.title}</motion.h3>
                       </div>
-
-                      <div className="grid grid-cols-1 gap-6">
-                        {[
-                          ['Role', project.role],
-                          ['Technical Challenge', project.challenge],
-                          ['Result', project.impact]
-                        ].map(([label, value]) => (
-                          <div key={label} className="border-l border-[#2D3442] pl-5">
-                            <h4 className="text-xs font-mono text-[#94A3B8] uppercase tracking-widest mb-2">{label}</h4>
-                            <p className="text-[#9AA0B2] leading-relaxed">{value}</p>
-                          </div>
-                        ))}
+                      <div className="flex gap-2 shrink-0">
+                        {project.link ? (
+                          <a href={project.link} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-[#EAEAF0] text-[#0B0D10] rounded-full font-medium hover:bg-white transition-colors flex items-center gap-2 text-sm tracking-wide whitespace-nowrap">
+                            Live Demo <ExternalLink size={16} />
+                          </a>
+                        ) : project.nda ? (
+                          <span className="px-6 py-3 bg-[#2D3442] text-[#9AA0B2] rounded-full font-medium flex items-center gap-2 text-sm tracking-wide whitespace-nowrap cursor-not-allowed" title="Link unavailable due to Non-Disclosure Agreement">
+                            Under NDA
+                          </span>
+                        ) : (
+                          <a href="#" className="px-6 py-3 bg-[#EAEAF0] text-[#0B0D10] rounded-full font-medium hover:bg-white transition-colors flex items-center gap-2 text-sm tracking-wide whitespace-nowrap">
+                            Live Demo <ExternalLink size={16} />
+                          </a>
+                        )}
                       </div>
+                    </div>
 
-                      <div>
-                        <h4 className="text-[#EAEAF0] font-medium text-xl mb-6 flex items-center gap-3">
-                          <span className="w-8 h-[1px] bg-[#94A3B8]"></span>
-                          Key Deliverables
-                        </h4>
-                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-                          {project.details.map((detail, idx) => (
-                            <li key={idx} className="flex items-center gap-3 text-[#9AA0B2] group">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#2D3442] group-hover:bg-[#94A3B8] transition-colors" />
-                              <span className="group-hover:text-[#EAEAF0] transition-colors">{detail}</span>
-                            </li>
+                    <div className="grid md:grid-cols-12 gap-12">
+                      {/* Main Content */}
+                      <div className="md:col-span-8 space-y-12">
+                        <div>
+                          <h4 className="text-[#EAEAF0] font-medium text-xl mb-6 flex items-center gap-3">
+                            <span className="w-8 h-[1px] bg-[#94A3B8]"></span>
+                            Project Overview
+                          </h4>
+                          <p className="text-[#9AA0B2] leading-relaxed text-lg font-light">
+                            {project.description}
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-6">
+                          {[
+                            ['Role', project.role],
+                            ['Technical Challenge', project.challenge],
+                            ['Result', project.impact]
+                          ].map(([label, value]) => (
+                            <div key={label} className="border-l border-[#2D3442] pl-5">
+                              <h4 className="text-xs font-mono text-[#94A3B8] uppercase tracking-widest mb-2">{label}</h4>
+                              <p className="text-[#9AA0B2] leading-relaxed">{value}</p>
+                            </div>
                           ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    {/* Sidebar Metadata */}
-                    <div className="md:col-span-4">
-                      <div className="bg-[#0B0D10] border border-[#2D3442] rounded-xl p-8 space-y-8 sticky top-8">
+                        </div>
 
                         <div>
-                          <h4 className="text-xs font-mono text-[#555A6B] uppercase tracking-widest mb-4">Tech Stack</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {project.tech.map((t, idx) => (
-                              <span key={idx} className="px-3 py-1.5 bg-[#141821] border border-[#2D3442] rounded text-xs text-[#94A3B8] font-mono">
-                                {t}
-                              </span>
+                          <h4 className="text-[#EAEAF0] font-medium text-xl mb-6 flex items-center gap-3">
+                            <span className="w-8 h-[1px] bg-[#94A3B8]"></span>
+                            Key Deliverables
+                          </h4>
+                          <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                            {project.details.map((detail, idx) => (
+                              <li key={idx} className="flex items-center gap-3 text-[#9AA0B2] group">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#2D3442] group-hover:bg-[#94A3B8] transition-colors" />
+                                <span className="group-hover:text-[#EAEAF0] transition-colors">{detail}</span>
+                              </li>
                             ))}
-                          </div>
+                          </ul>
                         </div>
+                      </div>
 
-                        <div className="w-full h-[1px] bg-[#2D3442]"></div>
+                      {/* Sidebar Metadata */}
+                      <div className="md:col-span-4">
+                        <div className="bg-[#0B0D10] border border-[#2D3442] rounded-xl p-8 space-y-8 sticky top-8">
 
-                        <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <p className="text-xs font-mono text-[#555A6B] uppercase tracking-widest mb-2">Year</p>
-                            <p className="text-[#EAEAF0] text-base font-medium">{project.year}</p>
+                            <h4 className="text-xs font-mono text-[#555A6B] uppercase tracking-widest mb-4">Tech Stack</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {project.tech.map((t, idx) => (
+                                <span key={idx} className="px-3 py-1.5 bg-[#141821] border border-[#2D3442] rounded text-xs text-[#94A3B8] font-mono">
+                                  {t}
+                                </span>
+                              ))}
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-xs font-mono text-[#555A6B] uppercase tracking-widest mb-2">Role</p>
-                            <p className="text-[#EAEAF0] text-base font-medium">Design & Dev</p>
+
+                          <div className="w-full h-[1px] bg-[#2D3442]"></div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-xs font-mono text-[#555A6B] uppercase tracking-widest mb-2">Year</p>
+                              <p className="text-[#EAEAF0] text-base font-medium">{project.year}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs font-mono text-[#555A6B] uppercase tracking-widest mb-2">Role</p>
+                              <p className="text-[#EAEAF0] text-base font-medium">Design & Dev</p>
+                            </div>
                           </div>
+
                         </div>
-
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
-          ))}
+                  </motion.div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         )}
       </AnimatePresence>
@@ -323,7 +323,7 @@ const ProjectCard: React.FC<{
         width="800"
         height="600"
       />
-      
+
       {/* Sliding color gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D10] via-transparent to-transparent opacity-90 group-hover:opacity-75 transition-opacity duration-500 z-10" />
 

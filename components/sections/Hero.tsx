@@ -199,7 +199,7 @@ const DecryptedText = ({
 
     return (
         <span 
-            className={`inline-flex flex-nowrap ${className}`} 
+            className={`inline-flex flex-wrap ${className}`} 
             onMouseEnter={handleHover}
         >
             {text.split("").map((char, index) => {
@@ -371,7 +371,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
       {/* Name & Role — H1 with gradient sweep */}
       <div className="mb-6">
         <h1
-          className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight leading-[1] mb-2 cursor-none origin-left relative whitespace-nowrap gradient-sweep"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight leading-[1] mb-2 cursor-none origin-left relative whitespace-normal sm:whitespace-nowrap gradient-sweep"
           data-cursor="hero-text"
           aria-label="Pratyush Jaiswal"
           onMouseEnter={() => onNameHoverChange(true)}

@@ -101,7 +101,7 @@ const TechStack: React.FC = () => {
             </motion.div>
 
             <motion.h2
-              className="text-4xl md:text-5xl font-bold text-[#EAEAF0] mt-2 h-[60px]"
+              className="text-4xl md:text-5xl font-bold text-[#EAEAF0] mt-2 min-h-[60px] h-auto"
               initial={{ opacity: 0, y: 12 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
               transition={{ duration: 0.5, delay: 0.12 }}

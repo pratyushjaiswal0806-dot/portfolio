@@ -145,7 +145,7 @@ const TimeBasedTypography = () => {
         <div className="py-12 border-l-2 border-[#2D3442] pl-8 md:pl-16 relative">
             <div className="absolute top-0 left-0 w-1 h-full bg-[#2D3442] origin-top scale-y-50" />
             <p className="text-[10px] font-mono text-[#555A6B] mb-8 uppercase tracking-widest">01 / Text Stagger System</p>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-medium leading-tight overflow-hidden">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-medium leading-tight overflow-hidden">
                 {words.map((word, i) => (
                     <motion.span
                         key={i}
@@ -528,7 +528,7 @@ function ParallaxText({ children, baseVelocity = 100 }: ParallaxTextProps) {
   return (
     <div className="overflow-hidden m-0 whitespace-nowrap flex flex-nowrap">
       <motion.div 
-        className="font-bold uppercase text-6xl md:text-8xl flex whitespace-nowrap flex-nowrap text-[#2D3442] tracking-tighter" 
+        className="font-bold uppercase text-4xl sm:text-6xl md:text-8xl flex whitespace-nowrap flex-nowrap text-[#2D3442] tracking-tighter" 
         style={{ x, skewX: skew }}
       >
         <span className="block mr-12">{children} </span>

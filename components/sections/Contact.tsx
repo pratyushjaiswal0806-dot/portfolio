@@ -70,7 +70,7 @@ const Contact: React.FC = () => {
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.1, ease: PREMIUM_EASE }}
-          className="text-5xl md:text-7xl font-bold text-[#EAEAF0] mb-6 tracking-tight"
+          className="text-4xl sm:text-5xl md:text-7xl font-bold text-[#EAEAF0] mb-6 tracking-tight"
         >
           Let's work <span className="text-[#94A3B8]">together</span>.
         </motion.h2>
@@ -150,7 +150,7 @@ const Contact: React.FC = () => {
               <span className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-widest mb-1.5">
                 {item.label}
               </span>
-              <span className="text-[#555A6B] group-hover:text-[#EAEAF0] transition-colors text-xs font-mono tracking-wide leading-relaxed max-w-[180px] truncate">
+              <span className="text-[#555A6B] group-hover:text-[#EAEAF0] transition-colors text-xs font-mono tracking-wide leading-relaxed max-w-full truncate">
                 {item.value}
               </span>
             </motion.a>

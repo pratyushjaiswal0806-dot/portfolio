@@ -311,7 +311,7 @@ const ProjectCard: React.FC<{
       onClick={() => setSelectedId(project.id)}
       style={disableMotion ? { scale: 1, opacity: 1, filter: "none" } : { scale, opacity, filter }}
       data-cursor="project-card"
-      className="relative w-full md:w-[600px] h-[430px] md:h-[60vh] bg-[#141821] rounded-2xl overflow-hidden cursor-pointer group border border-[#2D3442] flex-shrink-0"
+      className="relative w-full md:w-[600px] min-h-[380px] sm:h-[430px] md:h-[60vh] bg-[#141821] rounded-2xl overflow-hidden cursor-pointer group border border-[#2D3442] flex-shrink-0"
     >
       <motion.img
         layoutId={`image-${project.id}`}

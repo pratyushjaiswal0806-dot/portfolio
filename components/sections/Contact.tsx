@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useSpring, animated } from '@react-spring/web';
 import Magnetic from '../ui/Magnetic';
 import { Linkedin, Mail, Phone, Github, FileDown } from 'lucide-react';
 import { PREMIUM_EASE, staggerContainer, fadeUp } from '../ui/motion';
+
+const AnimFeTurbulence = animated('feTurbulence');
+const AnimFeDisplacementMap = animated('feDisplacementMap');
 
 const channels = [
   { icon: Mail, label: 'Email', value: 'pratyushjaiswal0806@gmail.com', href: 'mailto:pratyushjaiswal0806@gmail.com', external: false },
@@ -19,6 +22,14 @@ const Contact: React.FC = () => {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.6, 0]);
 
+  const [open, toggle] = useState(false);
+  const { freq, factor, scale, opacity } = useSpring({
+    reverse: open,
+    from: { factor: 10, opacity: 0.8, scale: 0.95, freq: '0.0175, 0.0' },
+    to: { factor: 150, opacity: 1, scale: 1, freq: '0.0, 0.0' },
+    config: { duration: 3000 },
+  });
+
   return (
     <section
       ref={sectionRef}
@@ -26,6 +37,23 @@ const Contact: React.FC = () => {
       className="py-32 px-6 md:px-24 bg-[#0B0D10] relative z-20 overflow-hidden"
       aria-label="Contact Pratyush Jaiswal"
     >
+      {/* SVG Water Displacement Filter Definition */}
+      <svg width="0" height="0" className="absolute w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <defs>
+          <filter id="water">
+            <AnimFeTurbulence type="fractalNoise" baseFrequency={freq} numOctaves="2" result="TURB" seed="8" />
+            <AnimFeDisplacementMap
+              xChannelSelector="R"
+              yChannelSelector="G"
+              in="SourceGraphic"
+              in2="TURB"
+              result="DISP"
+              scale={factor}
+            />
+          </filter>
+        </defs>
+      </svg>
+
       {/* Background subtle grid */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -64,15 +92,28 @@ const Contact: React.FC = () => {
           Contact
         </motion.span>
 
-        {/* Heading */}
+        {/* Heading with Animated SVG Water Displacement Filter */}
         <motion.h2
-          initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.1, ease: PREMIUM_EASE }}
-          className="text-4xl sm:text-5xl md:text-7xl font-bold text-[#EAEAF0] mb-6 tracking-tight"
+          onClick={() => toggle(prev => !prev)}
+          onMouseEnter={() => toggle(true)}
+          onMouseLeave={() => toggle(false)}
+          className="text-4xl sm:text-5xl md:text-7xl font-bold text-[#EAEAF0] mb-6 tracking-tight cursor-pointer select-none"
         >
-          Let's work <span className="text-[#94A3B8]">together</span>.
+          <animated.span
+            style={{
+              scale,
+              opacity,
+              filter: 'url(#water)',
+              display: 'inline-block',
+              willChange: 'transform, filter',
+            }}
+          >
+            Let's work <span className="text-[#94A3B8]">together</span>.
+          </animated.span>
         </motion.h2>
 
         {/* Subtext */}

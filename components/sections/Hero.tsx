@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate, AnimatePresence, useVelocity, useReducedMotion } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
+import { useSpring as useReactSpring, animated, to } from '@react-spring/web';
+import { useGesture } from '@use-gesture/react';
 import Magnetic from '../ui/Magnetic';
 import pratyushImg from '../assets/pratyush.jpg';
+
 
 // Easing for mechanical/architectural feel (expo.out)
 const MECHANICAL_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -436,39 +439,117 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
   );
 };
 
-// 6. Hero Image (Right Side)
+// 6. Hero Image (Right Side) with 3D Spring Gesture Effect
 const HeroImage = () => {
-  const [isHovered, setIsHovered] = useState(false);
+  const domTarget = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const preventDefault = (e: Event) => e.preventDefault();
+    document.addEventListener('gesturestart', preventDefault);
+    document.addEventListener('gesturechange', preventDefault);
+
+    return () => {
+      document.removeEventListener('gesturestart', preventDefault);
+      document.removeEventListener('gesturechange', preventDefault);
+    };
+  }, []);
+
+  const [{ x, y, rotateX, rotateY, rotateZ, zoom, imgScale }, api] = useReactSpring(
+    () => ({
+      rotateX: 0,
+      rotateY: 0,
+      rotateZ: 0,
+      imgScale: 1.25,
+      zoom: 0,
+      x: 0,
+      y: 0,
+      config: { mass: 5, tension: 350, friction: 40 },
+    })
+  );
+
+  const [{ wheelY }, wheelApi] = useReactSpring(() => ({ wheelY: 0 }));
+
+  const calcX = (py: number, ly: number) => {
+    if (!domTarget.current) return 0;
+    const rect = domTarget.current.getBoundingClientRect();
+    const centerY = rect.top + rect.height / 2;
+    return -(py - centerY) / 15;
+  };
+
+  const calcY = (px: number, lx: number) => {
+    if (!domTarget.current) return 0;
+    const rect = domTarget.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    return (px - centerX) / 15;
+  };
+
+  useGesture(
+    {
+      onDrag: ({ active, offset: [dx, dy] }) =>
+        api.start({ x: dx, y: dy, rotateX: 0, rotateY: 0, imgScale: active ? 1.35 : 1.25 }),
+      onPinch: ({ offset: [d, a] }) => api.start({ zoom: d / 200, rotateZ: a }),
+      onMove: ({ xy: [px, py], dragging }) =>
+        !dragging &&
+        api.start({
+          rotateX: calcX(py, y.get()),
+          rotateY: calcY(px, x.get()),
+          imgScale: 1.35,
+        }),
+      onHover: ({ hovering }) =>
+        !hovering && api.start({ rotateX: 0, rotateY: 0, imgScale: 1.25, x: 0, y: 0 }),
+      onWheel: ({ event, offset: [, wy] }) => {
+        event.preventDefault();
+        wheelApi.start({ wheelY: wy });
+      },
+    },
+    { target: domTarget, eventOptions: { passive: false } }
+  );
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
-      animate={{ 
-        opacity: 1, 
-        y: 0,
-        boxShadow: isHovered ? "0 20px 40px rgba(0,0,0,0.4)" : "0 10px 30px rgba(0,0,0,0.2)"
-      }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.6, duration: 1, ease: MECHANICAL_EASE }}
-      className="relative w-full max-w-[22rem] md:max-w-[26rem] aspect-[3/4] overflow-hidden group flex justify-center items-center bg-[#0B0D10] rounded-sm"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="relative w-full max-w-[22rem] md:max-w-[26rem] aspect-[3/4] flex items-center justify-center select-none"
     >
-      <motion.img
-        src={pratyushImg}
-        alt="Pratyush Jaiswal"
-        className="w-full h-full object-cover origin-center"
-        animate={{ 
-          scale: isHovered ? 1.35 : 1.25,
-          filter: isHovered ? "brightness(1.05)" : "brightness(0.95)",
+      <animated.div
+        ref={domTarget}
+        className="relative w-full h-full rounded-sm overflow-hidden cursor-grab active:cursor-grabbing shadow-2xl touch-none bg-[#0B0D10]"
+        style={{
+          transform: 'perspective(600px)',
+          x,
+          y,
+          rotateX,
+          rotateY,
+          rotateZ,
+          willChange: 'transform',
         }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      />
-      
-      {/* Very subtle overlay to blend with dark mode */}
-      <div className="absolute inset-0 bg-[#0B0D10] opacity-10 group-hover:opacity-0 transition-opacity duration-500 pointer-events-none" />
+      >
+        <animated.div
+          className="w-full h-full"
+          style={{
+            transform: wheelY.to(wy => `translateY(${- (wy % 40)}px)`),
+          }}
+        >
+          <animated.img
+            src={pratyushImg}
+            alt="Pratyush Jaiswal"
+            className="w-full h-full object-cover origin-center pointer-events-none select-none"
+            style={{
+              scale: to([imgScale, zoom], (s, z) => s + z),
+            }}
+            draggable={false}
+          />
+        </animated.div>
+
+        {/* Very subtle overlay to blend with dark mode */}
+        <div className="absolute inset-0 bg-[#0B0D10] opacity-10 pointer-events-none" />
+      </animated.div>
     </motion.div>
   );
 };
+
+
 
 // 7. Scroll Indicator Component (Refactored to show bouncing scroll pill and fade with scroll)
 const ScrollIndicator = ({ opacity }: { opacity: any }) => {

@@ -125,7 +125,7 @@ const TechStack: React.FC = () => {
               )}
             </motion.h2>
           </div>
-          
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 0.6 } : { opacity: 0 }}

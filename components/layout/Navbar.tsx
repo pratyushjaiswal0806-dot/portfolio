@@ -84,15 +84,15 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
             PJ<span className="text-[#94A3B8]">.</span>
           </div>
           {/* Tech Divider */}
-          <div className="hidden md:block w-[1px] h-4 bg-[#2D3442]"></div>
+          <div className="hidden lg:block w-[1px] h-4 bg-[#2D3442]"></div>
           {/* Coordinates/Time Display */}
-          <div className="hidden md:flex flex-col text-[10px] font-mono text-[#555A6B] leading-tight">
+          <div className="hidden lg:flex flex-col text-[10px] font-mono text-[#555A6B] leading-tight">
             <span>LAT: 12.9716° N</span>
             <span>LNG: 77.5946° E</span>
           </div>
         </div>
 
-        <div className="hidden md:flex gap-8 text-sm font-medium text-[#EAEAF0] items-center">
+        <div className="hidden lg:flex gap-6 xl:gap-8 text-sm font-medium text-[#EAEAF0] items-center">
           {currentView === 'home' && (
             <>
               {navItems.map((item) => {
@@ -136,14 +136,14 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
           )}
 
           {/* Live Time Badge */}
-          <div className="ml-4 px-3 py-1 bg-[#141821]/50 border border-[#2D3442] rounded-full text-[10px] font-mono text-[#94A3B8]">
+          <div className="hidden xl:block ml-2 px-3 py-1 bg-[#141821]/50 border border-[#2D3442] rounded-full text-[10px] font-mono text-[#94A3B8]">
             {time} UTC+5.30
           </div>
         </div>
 
         {/* Mobile Hamburger */}
         <button
-          className="md:hidden flex flex-col gap-1.5 p-2 relative z-50"
+          className="lg:hidden flex flex-col gap-1.5 p-2 relative z-50"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle navigation menu"
         >
@@ -173,7 +173,7 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-[#0B0D10]/95 backdrop-blur-xl z-30 flex flex-col items-center justify-center md:hidden"
+            className="fixed inset-0 bg-[#0B0D10]/95 backdrop-blur-xl z-30 flex flex-col items-center justify-center lg:hidden"
           >
             <motion.div className="flex flex-col items-center gap-8">
               {currentView === 'home' && navItems.map((item, index) => (

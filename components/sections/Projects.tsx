@@ -70,23 +70,30 @@ const Projects: React.FC = () => {
   }, []);
 
   // Transform that moves the project list horizontally
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-55%"]);
   const useStaticProjectList = isMobile || shouldReduceMotion;
 
   const springTransition = { type: 'spring', stiffness: 220, damping: 26 };
 
   return (
-    <section id="projects" className={`relative bg-[#0B0D10] ${selectedId ? 'z-[60]' : 'z-20'}`} aria-label="Selected Projects by Pratyush Jaiswal">
-      <div ref={targetRef} className={useStaticProjectList ? "relative px-6 py-24" : "h-[300vh] relative"}>
+    <section id="projects" className={`blueprint-section relative bg-[#0B0D10] ${selectedId ? 'z-[60]' : 'z-20'}`} aria-label="Selected Projects by Pratyush Jaiswal">
+      <div className="absolute inset-0 blueprint-grid-fade pointer-events-none" />
+      <div ref={targetRef} className={useStaticProjectList ? "relative px-5 sm:px-6 md:px-12 lg:px-24 py-20 sm:py-24 md:py-28" : "h-[220vh] relative"}>
         <div className={useStaticProjectList ? "max-w-7xl mx-auto" : "sticky top-0 h-screen overflow-hidden flex flex-col justify-center"}>
 
-          <div className={useStaticProjectList ? "mb-8" : "px-6 md:px-24 mb-8"}>
-            <h2 className="text-4xl md:text-6xl font-bold text-[#EAEAF0]">Selected Works by <span className="text-[#94A3B8]">Pratyush Jaiswal</span></h2>
+          <div className={useStaticProjectList ? "mb-10 md:mb-12" : "px-6 md:px-24 mb-8"}>
+            <span className="section-kicker">03 / Selected work</span>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#EAEAF0] tracking-tight">Projects with <span className="text-[#94A3B8]">purpose.</span></h2>
+              <p className="text-[#7F899B] text-sm md:text-base leading-relaxed max-w-md md:text-right">
+                Product thinking, interface systems, and technical decisions made visible.
+              </p>
+            </div>
           </div>
 
           <motion.div
             style={useStaticProjectList ? undefined : { x }}
-            className={useStaticProjectList ? "grid grid-cols-1 gap-6" : "flex gap-12 px-6 md:px-24 w-max items-center"}
+            className={useStaticProjectList ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" : "flex gap-12 px-6 md:px-24 w-max items-center"}
           >
             {projects.map((project, index) => (
               <ProjectCard
@@ -128,7 +135,7 @@ const Projects: React.FC = () => {
                 key={project.id}
                 layoutId={`card-container-${project.id}`}
                 transition={springTransition}
-                className="relative w-full max-w-5xl max-h-[90vh] bg-[#141821] rounded-2xl border border-[#2D3442] z-10 shadow-2xl flex flex-col overflow-hidden"
+            className="relative w-full max-w-5xl max-h-[92vh] bg-[#141821] rounded-xl md:rounded-2xl border border-[#2D3442] z-10 shadow-2xl flex flex-col overflow-hidden"
               >
                 {/* Fixed Close Button */}
                 <div className="absolute top-4 right-4 z-50">
@@ -143,7 +150,7 @@ const Projects: React.FC = () => {
 
                 {/* Scrollable Content Container */}
                 <div className="w-full flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide">
-                  <div className="relative h-[30vh] md:h-[35vh] w-full overflow-hidden">
+                  <div className="relative h-[24vh] sm:h-[30vh] md:h-[35vh] w-full overflow-hidden">
                     {/* Ken Burns zoom animation */}
                     <motion.img
                       layoutId={`image-${project.id}`}
@@ -162,19 +169,19 @@ const Projects: React.FC = () => {
                   </div>
 
                   <motion.div
-                    className="p-8 md:p-12 bg-[#141821]"
+                    className="p-5 sm:p-8 md:p-12 bg-[#141821]"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                   >
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-12 gap-5 md:gap-6">
                       <div className="flex-1">
                         <motion.p layoutId={`cat-${project.id}`} transition={springTransition} className="text-[#94A3B8] font-mono text-sm uppercase tracking-widest mb-3">{project.category}</motion.p>
-                        <motion.h3 layoutId={`title-${project.id}`} transition={springTransition} className="text-4xl md:text-6xl font-bold text-white tracking-tight">{project.title}</motion.h3>
+                        <motion.h3 layoutId={`title-${project.id}`} transition={springTransition} className="text-3xl sm:text-4xl md:text-6xl font-bold text-white tracking-tight">{project.title}</motion.h3>
                       </div>
                       <div className="flex gap-2 shrink-0">
                         {project.link ? (
-                          <a href={project.link} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-[#EAEAF0] text-[#0B0D10] rounded-full font-medium hover:bg-white transition-colors flex items-center gap-2 text-sm tracking-wide whitespace-nowrap">
+                          <a href={project.link} target="_blank" rel="noopener noreferrer" className="px-5 sm:px-6 py-3 bg-[#EAEAF0] text-[#0B0D10] rounded-full font-medium hover:bg-white transition-colors flex items-center gap-2 text-sm tracking-wide whitespace-nowrap">
                             Live Demo <ExternalLink size={16} />
                           </a>
                         ) : project.nda ? (
@@ -189,9 +196,9 @@ const Projects: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="grid md:grid-cols-12 gap-12">
+                    <div className="grid md:grid-cols-12 gap-8 md:gap-12">
                       {/* Main Content */}
-                      <div className="md:col-span-8 space-y-12">
+                      <div className="md:col-span-8 space-y-8 md:space-y-12">
                         <div>
                           <h4 className="text-[#EAEAF0] font-medium text-xl mb-6 flex items-center gap-3">
                             <span className="w-8 h-[1px] bg-[#94A3B8]"></span>
@@ -233,7 +240,7 @@ const Projects: React.FC = () => {
 
                       {/* Sidebar Metadata */}
                       <div className="md:col-span-4">
-                        <div className="bg-[#0B0D10] border border-[#2D3442] rounded-xl p-8 space-y-8 sticky top-8">
+                        <div className="bg-[#0B0D10] border border-[#2D3442] rounded-xl p-5 sm:p-8 space-y-6 sm:space-y-8 sticky top-8">
 
                           <div>
                             <h4 className="text-xs font-mono text-[#555A6B] uppercase tracking-widest mb-4">Tech Stack</h4>
@@ -282,36 +289,35 @@ const ProjectCard: React.FC<{
   setSelectedId: (id: string) => void;
   disableMotion?: boolean;
 }> = ({ project, index, scrollYProgress, total, setSelectedId, disableMotion = false }) => {
-  const step = 1 / total;
-  const start = index * step;
-  const end = start + step;
-
-  const center = start + (step / 2);
+  const center = total === 1 ? 0 : index / (total - 1);
+  const focusSpan = 0.36;
 
   const scale = useTransform(scrollYProgress,
-    [start - 0.2, center, end + 0.2],
+    [center - focusSpan, center, center + focusSpan],
     [0.94, 1, 0.94]
   );
   const opacity = useTransform(scrollYProgress,
-    [start - 0.2, center, end + 0.2],
+    [center - focusSpan, center, center + focusSpan],
     [0.4, 1, 0.4]
   );
 
   const filter = useTransform(scrollYProgress,
-    [start - 0.2, center, end + 0.2],
+    [center - focusSpan, center, center + focusSpan],
     ["grayscale(100%) blur(4px)", "grayscale(0%) blur(0px)", "grayscale(100%) blur(4px)"]
   );
 
   const springTransition = { type: 'spring', stiffness: 220, damping: 26 };
 
   return (
-    <motion.div
+    <motion.button
+      type="button"
       layoutId={`card-container-${project.id}`}
       transition={springTransition}
       onClick={() => setSelectedId(project.id)}
       style={disableMotion ? { scale: 1, opacity: 1, filter: "none" } : { scale, opacity, filter }}
       data-cursor="project-card"
-      className="relative w-full md:w-[600px] min-h-[380px] sm:h-[430px] md:h-[60vh] bg-[#141821] rounded-2xl overflow-hidden cursor-pointer group border border-[#2D3442] flex-shrink-0"
+      aria-label={`Open ${project.title} project details`}
+      className={`relative w-full h-[400px] sm:h-[430px] bg-[#141821] overflow-hidden cursor-pointer group border border-[#2D3442] flex-shrink-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#94A3B8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0B0D10] ${disableMotion ? 'md:h-[460px]' : 'md:w-[600px] md:h-[60vh]'}`}
     >
       <motion.img
         layoutId={`image-${project.id}`}
@@ -328,16 +334,16 @@ const ProjectCard: React.FC<{
       <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D10] via-transparent to-transparent opacity-90 group-hover:opacity-75 transition-opacity duration-500 z-10" />
 
       {/* Slide shifting title container */}
-      <div className="absolute bottom-0 left-0 p-8 w-full z-20 transform group-hover:-translate-y-1.5 transition-transform duration-500">
+      <div className="absolute bottom-0 left-0 p-5 sm:p-8 w-full z-20 transform group-hover:-translate-y-1.5 transition-transform duration-500">
         <motion.p layoutId={`cat-${project.id}`} transition={springTransition} className="text-[#94A3B8] text-sm font-bold uppercase tracking-wider mb-2">{project.category}</motion.p>
         <motion.h3 layoutId={`title-${project.id}`} transition={springTransition} className="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:text-white transition-colors">{project.title}</motion.h3>
         <p className="text-[#9AA0B2] line-clamp-2 font-light text-sm md:text-base leading-relaxed">{project.description}</p>
       </div>
 
-      <div className="absolute top-8 right-8 bg-black/30 backdrop-blur-md p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-white/10 z-20">
-        <ArrowRight className="text-white w-6 h-6 -rotate-45" />
+      <div className="absolute top-4 right-4 sm:top-8 sm:right-8 bg-black/30 backdrop-blur-md p-2.5 sm:p-3 rounded-full opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-white/10 z-20">
+        <ArrowRight className="text-white w-5 h-5 sm:w-6 sm:h-6 -rotate-45" />
       </div>
-    </motion.div>
+    </motion.button>
   );
 };
 

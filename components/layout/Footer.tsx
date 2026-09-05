@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
       {/* Top accent line */}
       <div className="h-px bg-gradient-to-r from-transparent via-[#2D3442] to-transparent" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-24 py-16">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-24 py-12 sm:py-16">
 
         {/* Status + Brand Row */}
         <motion.div
@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16"
+          className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-8 mb-12 md:mb-16"
         >
           <div className="flex items-center gap-6">
             <div className="text-[#EAEAF0] font-bold text-3xl tracking-tight">
@@ -60,20 +60,25 @@ const Footer: React.FC = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-3 gap-12 md:gap-8 mb-16 pb-16 border-b border-[#2D3442]/50"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-8 mb-12 md:mb-16 pb-12 md:pb-16 border-b border-[#2D3442]/50"
         >
           {/* Navigate */}
           <div>
             <h4 className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-widest mb-5">Navigate</h4>
             <div className="flex flex-col gap-3">
-              {['Skills', 'Projects', 'About', 'Contact'].map((item) => (
+              {[
+                ['Tech Stack', 'tech-stack'],
+                ['Projects', 'projects'],
+                ['About', 'about'],
+                ['Contact', 'contact'],
+              ].map(([label, id]) => (
                 <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
+                  key={id}
+                  href={`#${id}`}
                   className="text-[#555A6B] hover:text-[#EAEAF0] transition-colors text-sm inline-flex items-center gap-2 group"
                 >
                   <span className="w-0 group-hover:w-3 h-px bg-[#94A3B8] transition-all duration-300" />
-                  {item}
+                  {label}
                 </a>
               ))}
             </div>

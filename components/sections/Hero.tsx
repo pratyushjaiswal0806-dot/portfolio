@@ -84,7 +84,7 @@ const Hero: React.FC = () => {
   const maskImage = useMotionTemplate`radial-gradient(${smoothMaskRadius}px circle at ${mouseX}px ${mouseY}px, black, transparent)`;
 
   return (
-    <section ref={containerRef} className="relative min-h-screen lg:h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0B0D10] py-20 lg:py-0">
+    <section ref={containerRef} className="relative min-h-screen lg:h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0B0D10] pt-28 pb-16 sm:py-24 lg:py-0">
       
       {/* LAYER 0: Deep/Background Grid */}
       <motion.div 
@@ -115,7 +115,7 @@ const Hero: React.FC = () => {
       </motion.div>
 
       {/* LAYER 2: Main Content Container */}
-      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 items-center">
         
         {/* LEFT COLUMN: Identity & Manifesto */}
         <div className="lg:col-span-7 flex flex-col items-start">
@@ -135,14 +135,14 @@ const Hero: React.FC = () => {
             rotateX: useTransform(smoothMouseY, [0, 1000], [5, -5]), 
             rotateY: useTransform(smoothMouseX, [0, 1000], [-5, 5]) 
           }}
-          className="lg:col-span-5 flex justify-center lg:justify-end perspective-1000 mt-12 lg:mt-0"
+          className="lg:col-span-5 flex justify-center lg:justify-end perspective-1000 mt-2 sm:mt-6 lg:mt-0"
         >
           <HeroImage />
         </motion.div>
       </div>
 
       {/* LAYER 3: Bottom Aligned Footer Elements (Matches Content Grid) */}
-      <div className="absolute bottom-10 left-0 w-full z-20 pointer-events-none">
+      <div className="hidden md:block absolute bottom-10 left-0 w-full z-20 pointer-events-none">
          <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 flex justify-between items-end">
             <ScrollIndicator opacity={scrollIndicatorOpacity} />
             <SystemStatus />
@@ -318,7 +318,7 @@ const RotatingRole = ({ shouldReduceMotion }: { shouldReduceMotion: boolean | nu
         <motion.span
           key={index}
           initial={shouldReduceMotion ? false : { y: 40, opacity: 0, rotateX: -90 }}
-          animate={{ y: 0, opacity: 0.6, rotateX: 0 }}
+          animate={{ y: 0, opacity: 0.85, rotateX: 0 }}
           exit={shouldReduceMotion ? undefined : { y: -40, opacity: 0, rotateX: 90 }}
           transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5, ease: MECHANICAL_EASE }}
           className="block text-[#9AA0B2] font-bold tracking-widest"
@@ -375,7 +375,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
       {/* Name & Role — H1 with gradient sweep */}
       <div className="mb-6">
         <h1
-          className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight leading-[1] mb-2 cursor-none origin-left relative whitespace-nowrap gradient-sweep"
+          className="text-[clamp(1.7rem,8vw,2.25rem)] sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight leading-[1] mb-3 cursor-none origin-left relative whitespace-nowrap gradient-sweep"
           data-cursor="hero-text"
           aria-label="Pratyush Jaiswal"
           onMouseEnter={() => onNameHoverChange(true)}
@@ -389,10 +389,10 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
         </h1>
         <motion.div 
           variants={roleAnim} 
-          className="text-2xl md:text-3xl lg:text-5xl flex flex-wrap items-baseline cursor-none"
+          className="text-xl sm:text-2xl md:text-3xl lg:text-5xl flex flex-wrap items-baseline cursor-none"
           data-cursor="text-hover"
         >
-          <span className="text-[#9AA0B2] opacity-30 font-medium mr-2 tracking-wide">is a</span>
+          <span className="text-[#7F899B] font-medium mr-2 tracking-wide">is a</span>
           <RotatingRole shouldReduceMotion={shouldReduceMotion} />
         </motion.div>
       </div>
@@ -400,7 +400,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
       {/* Description with blur reveal */}
       <motion.p 
         variants={itemAnim}
-        className="mt-8 text-lg md:text-xl text-[#9AA0B2] max-w-lg leading-relaxed font-light"
+        className="mt-7 sm:mt-8 text-base sm:text-lg md:text-xl text-[#9AA0B2] max-w-lg leading-relaxed font-light"
       >
         CSE student building fast React interfaces, real-time apps, developer tools, and algorithm-focused projects.
       </motion.p>
@@ -425,7 +425,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
             {/* Spotlight Glow */}
             <span className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 spotlight-card-glow" />
             
-            <span className="relative z-10 font-mono tracking-wider text-sm">OPEN BLUEPRINT</span>
+            <span className="relative z-10 font-mono tracking-wider text-sm">VIEW SELECTED WORK</span>
             <motion.span 
               className="relative z-10 text-[#94A3B8] group-hover:text-[#EAEAF0] transition-colors"
               animate={shouldReduceMotion ? undefined : { y: [0, 4, 0] }}
@@ -511,11 +511,15 @@ const HeroImage = () => {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.6, duration: 1, ease: MECHANICAL_EASE }}
-      className="relative w-full max-w-[22rem] md:max-w-[26rem] aspect-[3/4] flex items-center justify-center select-none"
+      className="relative w-full max-w-[17rem] sm:max-w-[20rem] md:max-w-[26rem] aspect-[4/5] sm:aspect-[3/4] flex items-center justify-center select-none"
     >
+      <span className="absolute -top-3 left-0 font-mono text-[9px] uppercase tracking-[0.2em] text-[#667085]">Portrait / PJ_01</span>
+      <span className="absolute -bottom-3 right-0 font-mono text-[9px] uppercase tracking-[0.2em] text-[#667085]">Bengaluru · IN</span>
+      <span className="absolute -left-2 -top-2 w-8 h-8 border-l border-t border-[#94A3B8] pointer-events-none" />
+      <span className="absolute -right-2 -bottom-2 w-8 h-8 border-r border-b border-[#94A3B8] pointer-events-none" />
       <animated.div
         ref={domTarget}
-        className="relative w-full h-full rounded-sm overflow-hidden cursor-grab active:cursor-grabbing shadow-2xl touch-none bg-[#0B0D10]"
+        className="relative w-full h-full overflow-hidden cursor-grab active:cursor-grabbing shadow-2xl touch-pan-y bg-[#0B0D10] border border-[#2D3442]"
         style={{
           transform: 'perspective(600px)',
           x,
@@ -559,7 +563,7 @@ const ScrollIndicator = ({ opacity }: { opacity: any }) => {
       className="flex flex-col items-center gap-2 text-[#9AA0B2] pointer-events-auto cursor-pointer"
       style={{ opacity }}
       onClick={() => {
-        const skillsEl = document.getElementById('skills');
+        const skillsEl = document.getElementById('tech-stack');
         if (skillsEl) skillsEl.scrollIntoView({ behavior: 'smooth' });
       }}
     >

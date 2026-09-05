@@ -68,7 +68,7 @@ const orbits: OrbitRing[] = [
 
 export default function OrbitingCirclesGlobeDemo() {
   return (
-    <div className="relative w-full h-[520px] md:h-[660px] overflow-hidden flex justify-center items-center select-none">
+    <div className="relative w-full h-[420px] sm:h-[520px] md:h-[660px] overflow-hidden flex justify-center items-center select-none">
       <style>{`
         @keyframes orbit-cw {
           from { transform: rotate(var(--start-angle)) }

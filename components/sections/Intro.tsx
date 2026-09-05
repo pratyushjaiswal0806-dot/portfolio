@@ -1,13 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, MotionValue, useSpring, useInView, animate, useMotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, MotionValue, useSpring, useInView, animate, useMotionValue, useReducedMotion } from 'framer-motion';
 
 const StatCounter = ({ value, suffix = "" }: { value: number; suffix?: string }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
+  const shouldReduceMotion = useReducedMotion();
   const count = useMotionValue(0);
   const [displayVal, setDisplayVal] = useState("0");
 
   useEffect(() => {
+    if (shouldReduceMotion) {
+      setDisplayVal(value.toString());
+      return;
+    }
     if (isInView) {
       const controls = animate(count, value, {
         duration: 2,
@@ -16,13 +21,14 @@ const StatCounter = ({ value, suffix = "" }: { value: number; suffix?: string })
       });
       return controls.stop;
     }
-  }, [isInView, value, count]);
+  }, [isInView, value, count, shouldReduceMotion]);
 
   return <span ref={ref}>{displayVal}{suffix}</span>;
 };
 
 const Intro: React.FC = () => {
   const containerRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   // Track scroll progress for entrance animations (text reveal)
   const { scrollYProgress } = useScroll({
@@ -44,17 +50,12 @@ const Intro: React.FC = () => {
   });
 
   const content = [
-    { text: "I'm a ", type: "normal" },
-    { text: "Computer Science", type: "highlight" },
-    { text: " student who thrives on ", type: "normal" },
-    { text: "building projects", type: "highlight" },
-    { text: ", learning ", type: "normal" },
-    { text: "new technologies", type: "highlight" },
-    { text: ", and solving ", type: "normal" },
-    { text: "real-world problems", type: "highlight" },
-    { text: " with code that's clean, thoughtful, and ", type: "normal" },
-    { text: "built to last", type: "highlight" },
-    { text: ".", type: "normal" },
+    { text: "I care about the space between a ", type: "normal" },
+    { text: "rough idea", type: "highlight" },
+    { text: " and a ", type: "normal" },
+    { text: "dependable product:", type: "highlight" },
+    { text: " clear flows, resilient UI states, and code a team can ", type: "normal" },
+    { text: "keep extending.", type: "highlight" },
   ];
 
   // Flatten the content into individual words for granular animation
@@ -76,12 +77,12 @@ const Intro: React.FC = () => {
   const bgOpacity = useTransform(exitProgress, [0, 0.6], [1, 0]);
 
   return (
-    <section ref={containerRef} className="py-24 md:py-40 px-6 md:px-24 bg-[#0B0D10] relative z-20 overflow-hidden min-h-[80vh] flex flex-col justify-center">
+    <section ref={containerRef} className="py-20 sm:py-24 md:py-32 px-5 sm:px-6 md:px-12 lg:px-24 bg-[#0B0D10] relative z-20 overflow-hidden min-h-[62vh] flex flex-col justify-center">
 
       {/* Background Elements with Subtle Scrolling Grid */}
       <motion.div
         className="absolute inset-0 z-0 pointer-events-none"
-        style={{ y: bgY, opacity: bgOpacity }}
+        style={shouldReduceMotion ? undefined : { y: bgY, opacity: bgOpacity }}
       >
         {/* Subtle Grid Pattern */}
         <div 
@@ -99,14 +100,16 @@ const Intro: React.FC = () => {
         <div className="absolute top-0 bottom-0 left-[10%] w-[1px] bg-[#2D3442]/20" />
       </motion.div>
 
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-[1248px] mx-auto relative z-10">
         {/* Divider line that grows with scroll */}
         <motion.div
-          className="h-[1px] bg-gradient-to-r from-[#94A3B8] to-transparent mb-16"
-          style={{ scaleX: smoothProgress, transformOrigin: "left" }}
+          className="h-[1px] bg-gradient-to-r from-[#94A3B8] to-transparent mb-10 sm:mb-16"
+          style={shouldReduceMotion ? { scaleX: 1 } : { scaleX: smoothProgress, transformOrigin: "left" }}
         />
 
-        <p className="text-3xl md:text-5xl lg:text-6xl font-medium leading-[1.15] tracking-tight text-[#EAEAF0] flex flex-wrap gap-x-3 md:gap-x-4 gap-y-2">
+        <span className="section-kicker">01 / Working approach</span>
+
+        <p className="max-w-5xl text-[1.8rem] sm:text-3xl md:text-5xl lg:text-[3.4rem] font-medium leading-[1.16] tracking-tight text-[#EAEAF0] flex flex-wrap gap-x-2.5 md:gap-x-4 gap-y-2">
           {words.map((wordObj, i) => (
             <ScrollWord
               key={i}
@@ -115,41 +118,36 @@ const Intro: React.FC = () => {
               index={i}
               total={words.length}
               progress={smoothProgress}
+              shouldReduceMotion={shouldReduceMotion}
             />
           ))}
         </p>
 
         {/* Animated Counter Stats & Metadata */}
         <motion.div
-          className="mt-20 grid grid-cols-2 md:flex md:flex-row gap-12 text-[#9AA0B2]"
-          style={{ opacity: metaOpacity, y: metaY }}
+          className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 border-t border-l border-[#2D3442] text-[#9AA0B2]"
+          style={shouldReduceMotion ? { opacity: 1 } : { opacity: metaOpacity, y: metaY }}
         >
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 p-4 sm:p-5 border-r border-b border-[#2D3442]">
             <span className="text-xs uppercase tracking-[0.2em] text-[#94A3B8] font-bold">Based In</span>
             <span className="text-[#EAEAF0] text-lg font-light">Bangalore, India</span>
           </div>
 
-          <div className="hidden md:block w-[1px] bg-[#2D3442] h-12"></div>
-
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 p-4 sm:p-5 border-r border-b border-[#2D3442]">
             <span className="text-xs uppercase tracking-[0.2em] text-[#94A3B8] font-bold">Code Commits</span>
             <span className="text-[#EAEAF0] text-lg font-mono font-bold">
               <StatCounter value={500} suffix="+" />
             </span>
           </div>
 
-          <div className="hidden md:block w-[1px] bg-[#2D3442] h-12"></div>
-
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 p-4 sm:p-5 border-r border-b border-[#2D3442]">
             <span className="text-xs uppercase tracking-[0.2em] text-[#94A3B8] font-bold">Hackathons & Projects</span>
             <span className="text-[#EAEAF0] text-lg font-mono font-bold">
               <StatCounter value={12} suffix="+" />
             </span>
           </div>
 
-          <div className="hidden md:block w-[1px] bg-[#2D3442] h-12"></div>
-
-          <div className="flex flex-col gap-2 col-span-2">
+          <div className="flex flex-col gap-2 p-4 sm:p-5 border-r border-b border-[#2D3442]">
             <span className="text-xs uppercase tracking-[0.2em] text-[#94A3B8] font-bold">Availability</span>
             <div className="flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">
@@ -171,9 +169,10 @@ interface ScrollWordProps {
   index: number;
   total: number;
   progress: MotionValue<number>;
+  shouldReduceMotion: boolean | null;
 }
 
-const ScrollWord: React.FC<ScrollWordProps> = ({ word, isHighlight, index, total, progress }) => {
+const ScrollWord: React.FC<ScrollWordProps> = ({ word, isHighlight, index, total, progress, shouldReduceMotion }) => {
   // Calculate the range for this specific word based on scroll
   const step = 0.9 / total; // Use 90% of the scroll space for text
   const start = index * step;
@@ -190,7 +189,7 @@ const ScrollWord: React.FC<ScrollWordProps> = ({ word, isHighlight, index, total
   return (
     <span className="relative inline-block">
       <motion.span
-        style={{ opacity, y, filter, color }}
+        style={shouldReduceMotion ? { opacity: 1, color: isHighlight ? '#94A3B8' : '#EAEAF0' } : { opacity, y, filter, color }}
         className="inline-block transition-colors duration-200"
       >
         {word}

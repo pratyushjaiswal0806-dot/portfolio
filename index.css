@@ -68,6 +68,49 @@
   );
 }
 
+/* Shared architectural section language */
+.blueprint-section {
+  border-top: 1px solid rgba(45, 52, 66, 0.65);
+  border-bottom: 1px solid rgba(45, 52, 66, 0.45);
+}
+
+.blueprint-grid-fade {
+  opacity: 0.035;
+  background-image:
+    linear-gradient(#EAEAF0 1px, transparent 1px),
+    linear-gradient(90deg, #EAEAF0 1px, transparent 1px);
+  background-size: 60px 60px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+}
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  color: #94A3B8;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.section-kicker::before {
+  width: 1.75rem;
+  height: 1px;
+  background: #526175;
+  content: '';
+}
+
+.tech-radar {
+  background:
+    radial-gradient(circle at center, transparent 28%, rgba(148, 163, 184, 0.18) 29%, transparent 30%),
+    radial-gradient(circle at center, transparent 52%, rgba(148, 163, 184, 0.13) 53%, transparent 54%),
+    linear-gradient(45deg, transparent 49.5%, rgba(148, 163, 184, 0.12) 50%, transparent 50.5%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto !important;
@@ -88,6 +131,20 @@
 }
 
 @media (hover: none), (pointer: coarse) {
+  body {
+    cursor: auto !important;
+  }
+
+  a, button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@media (max-width: 767px) {
+  html {
+    scroll-padding-top: 5rem;
+  }
+
   body {
     cursor: auto !important;
   }

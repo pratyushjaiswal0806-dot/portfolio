@@ -9,8 +9,9 @@ import About from './components/sections/About';
 import Contact from './components/sections/Contact';
 import Footer from './components/layout/Footer';
 import Cursor from './components/ui/Cursor';
-import AnimationLab from './components/sections/AnimationLab';
 import BootLoader from './components/ui/BootLoader';
+
+const AnimationLab = React.lazy(() => import('./components/sections/AnimationLab'));
 
 type ViewState = 'home' | 'lab';
 
@@ -19,8 +20,11 @@ type ViewState = 'home' | 'lab';
 const shouldShowLoader = (): boolean => {
   if (typeof window === 'undefined') return true;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const compactViewport = window.matchMedia('(max-width: 767px)').matches;
   const hasSeenLoader = sessionStorage.getItem('pj-loader-seen') === 'true';
-  return !hasSeenLoader && !reducedMotion;
+  // The loader is a desktop flourish. On a phone it delays the first useful
+  // interaction and competes with the hero for the small initial viewport.
+  return !hasSeenLoader && !reducedMotion && !compactViewport;
 };
 
 const App: React.FC = () => {
@@ -102,7 +106,15 @@ const App: React.FC = () => {
                 key="lab"
                 className="w-full"
               >
-                <AnimationLab onBack={() => setView('home')} />
+                <React.Suspense
+                  fallback={(
+                    <div className="min-h-screen bg-[#0B0D10] flex items-center justify-center text-[#94A3B8] font-mono text-xs uppercase tracking-[0.2em]">
+                      Loading motion systems…
+                    </div>
+                  )}
+                >
+                  <AnimationLab onBack={() => setView('home')} />
+                </React.Suspense>
               </motion.div>
             )}
           </AnimatePresence>

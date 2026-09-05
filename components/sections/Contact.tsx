@@ -1,12 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useSpring, animated } from '@react-spring/web';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import Magnetic from '../ui/Magnetic';
 import { Linkedin, Mail, Phone, Github, FileDown } from 'lucide-react';
 import { PREMIUM_EASE, staggerContainer, fadeUp } from '../ui/motion';
-
-const AnimFeTurbulence = animated('feTurbulence');
-const AnimFeDisplacementMap = animated('feDisplacementMap');
 
 const channels = [
   { icon: Mail, label: 'Email', value: 'pratyushjaiswal0806@gmail.com', href: 'mailto:pratyushjaiswal0806@gmail.com', external: false },
@@ -19,41 +15,17 @@ const resumeHref = '/Pratyush.Jaiswal.pdf';
 
 const Contact: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.6, 0]);
-
-  const [open, toggle] = useState(false);
-  const { freq, factor, scale, opacity } = useSpring({
-    reverse: open,
-    from: { factor: 10, opacity: 0.8, scale: 0.95, freq: '0.0175, 0.0' },
-    to: { factor: 150, opacity: 1, scale: 1, freq: '0.0, 0.0' },
-    config: { duration: 3000 },
-  });
 
   return (
     <section
       ref={sectionRef}
       id="contact"
-      className="py-32 px-6 md:px-24 bg-[#0B0D10] relative z-20 overflow-hidden"
+      className="blueprint-section py-20 sm:py-24 md:py-28 px-5 sm:px-6 md:px-12 lg:px-24 bg-[#0B0D10] relative z-20 overflow-hidden"
       aria-label="Contact Pratyush Jaiswal"
     >
-      {/* SVG Water Displacement Filter Definition */}
-      <svg width="0" height="0" className="absolute w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <defs>
-          <filter id="water">
-            <AnimFeTurbulence type="fractalNoise" baseFrequency={freq} numOctaves="2" result="TURB" seed="8" />
-            <AnimFeDisplacementMap
-              xChannelSelector="R"
-              yChannelSelector="G"
-              in="SourceGraphic"
-              in2="TURB"
-              result="DISP"
-              scale={factor}
-            />
-          </filter>
-        </defs>
-      </svg>
-
       {/* Background subtle grid */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -83,63 +55,50 @@ const Contact: React.FC = () => {
 
         {/* Section Label */}
         <motion.span
-          initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 10, filter: 'blur(4px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: PREMIUM_EASE }}
-          className="inline-block text-sm font-bold uppercase tracking-widest text-[#94A3B8] mb-6"
+          className="section-kicker"
         >
-          Contact
+          05 / Contact
         </motion.span>
 
         {/* Heading with Animated SVG Water Displacement Filter */}
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.1, ease: PREMIUM_EASE }}
-          onClick={() => toggle(prev => !prev)}
-          onMouseEnter={() => toggle(true)}
-          onMouseLeave={() => toggle(false)}
-          className="text-4xl sm:text-5xl md:text-7xl font-bold text-[#EAEAF0] mb-6 tracking-tight cursor-pointer select-none"
+          className="text-4xl sm:text-5xl md:text-7xl font-bold text-[#EAEAF0] mb-6 tracking-tight"
         >
-          <animated.span
-            style={{
-              scale,
-              opacity,
-              filter: 'url(#water)',
-              display: 'inline-block',
-              willChange: 'transform, filter',
-            }}
-          >
-            Let's work <span className="text-[#94A3B8]">together</span>.
-          </animated.span>
+          Let's work <span className="text-[#94A3B8]">together</span>.
         </motion.h2>
 
         {/* Subtext */}
         <motion.p
-          initial={{ opacity: 0, y: 15, filter: 'blur(4px)' }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 15, filter: 'blur(4px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2, ease: PREMIUM_EASE }}
-          className="text-[#9AA0B2] text-lg md:text-xl mb-14 max-w-lg mx-auto leading-relaxed font-light"
+          className="text-[#9AA0B2] text-base sm:text-lg md:text-xl mb-10 sm:mb-14 max-w-lg mx-auto leading-relaxed font-light"
         >
           Have a project, internship, or frontend role in mind? Let's connect.
         </motion.p>
 
         {/* CTA Button */}
         <motion.div
-          initial={{ opacity: 0, y: 15, filter: 'blur(4px)' }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 15, filter: 'blur(4px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3, ease: PREMIUM_EASE }}
-          className="flex justify-center mb-20"
+          className="flex justify-center mb-14 sm:mb-20"
         >
           <Magnetic strength={0.25}>
-            <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <a
                 href="mailto:pratyushjaiswal0806@gmail.com"
-                className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#EAEAF0] text-[#0B0D10] text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(148,163,184,0.1)] hover:shadow-[0_0_30px_rgba(148,163,184,0.25)]"
+                className="group relative inline-flex justify-center items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-[#EAEAF0] text-[#0B0D10] text-sm sm:text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(148,163,184,0.1)] hover:shadow-[0_0_30px_rgba(148,163,184,0.25)]"
                 data-cursor="hover"
               >
                 GET IN TOUCH
@@ -152,7 +111,7 @@ const Contact: React.FC = () => {
               <a
                 href={resumeHref}
                 download
-                className="inline-flex items-center gap-3 px-8 py-5 border border-[#2D3442] text-[#EAEAF0] text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:border-[#94A3B8] hover:text-white transition-all duration-300"
+                className="inline-flex justify-center items-center gap-3 px-8 py-4 sm:py-5 border border-[#2D3442] text-[#EAEAF0] text-sm sm:text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:border-[#94A3B8] hover:text-white transition-all duration-300"
                 data-cursor="hover"
               >
                 Resume
@@ -171,10 +130,10 @@ const Contact: React.FC = () => {
         {/* Contact Channels */}
         <motion.div
           variants={staggerContainer}
-          initial="hidden"
+          initial={shouldReduceMotion ? false : 'hidden'}
           whileInView="visible"
           viewport={{ once: true, margin: "-10%" }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6"
+          className="grid grid-cols-2 md:grid-cols-4 border-t border-l border-[#2D3442]"
         >
           {channels.map((item) => (
             <motion.a
@@ -183,15 +142,15 @@ const Contact: React.FC = () => {
               href={item.href}
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noreferrer' : undefined}
-              className="flex flex-col items-center text-center group"
+              className="min-h-[160px] md:min-h-[180px] p-3 sm:p-5 border-r border-b border-[#2D3442] bg-[#0D1015]/60 flex flex-col items-center justify-center text-center group hover:bg-[#141922] transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#94A3B8]"
             >
-              <div className="w-14 h-14 rounded-full bg-[#141821]/80 border border-[#2D3442]/80 flex items-center justify-center mb-4 group-hover:bg-[#EAEAF0] group-hover:border-transparent group-hover:shadow-[0_0_24px_rgba(148,163,184,0.15)] transition-all duration-500">
+              <div className="w-12 h-12 bg-[#141821]/80 border border-[#2D3442]/80 flex items-center justify-center mb-4 group-hover:bg-[#EAEAF0] group-hover:border-transparent group-hover:shadow-[0_0_24px_rgba(148,163,184,0.15)] transition-all duration-500">
                 <item.icon className="w-5 h-5 text-[#94A3B8] group-hover:text-[#0B0D10] transition-colors duration-500" />
               </div>
               <span className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-widest mb-1.5">
                 {item.label}
               </span>
-              <span className="text-[#555A6B] group-hover:text-[#EAEAF0] transition-colors text-xs font-mono tracking-wide leading-relaxed max-w-full truncate">
+              <span className="text-[#667085] group-hover:text-[#EAEAF0] transition-colors text-[11px] font-mono tracking-wide leading-relaxed max-w-full break-all">
                 {item.value}
               </span>
             </motion.a>

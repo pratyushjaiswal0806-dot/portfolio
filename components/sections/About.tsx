@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion, Variants } from 'framer-motion';
 import { PREMIUM_EASE } from '../ui/motion';
 
 const focusAreas = [
@@ -19,6 +19,7 @@ const focusAreas = [
 
 const About: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -53,7 +54,7 @@ const About: React.FC = () => {
   };
 
   return (
-    <section id="about" ref={containerRef} className="py-28 md:py-32 px-6 md:px-24 bg-[#0B0D10] relative z-20 overflow-hidden" aria-label="About Pratyush Jaiswal">
+    <section id="about" ref={containerRef} className="blueprint-section py-20 sm:py-24 md:py-28 px-5 sm:px-6 md:px-12 lg:px-24 bg-[#0D1015] relative z-20 overflow-hidden" aria-label="About Pratyush Jaiswal">
       <div
         className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{
@@ -62,40 +63,41 @@ const About: React.FC = () => {
         }}
       />
 
-      <div className="max-w-3xl mx-auto relative z-10">
+      <div className="max-w-[1248px] mx-auto relative z-10">
 
         <motion.div
           variants={containerVariants}
-          initial="hidden"
+          initial={shouldReduceMotion ? false : 'hidden'}
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
           className="pt-2"
         >
           <motion.span
             variants={itemVariants}
-            className="text-[#94A3B8] font-bold uppercase tracking-widest text-sm mb-6 block"
+            className="section-kicker"
           >
-            How I Build
+            04 / How I build
           </motion.span>
 
           <motion.h2
             variants={itemVariants}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#EAEAF0] mb-8 leading-tight tracking-tight"
+            className="max-w-4xl text-4xl md:text-5xl lg:text-6xl font-bold text-[#EAEAF0] mb-8 leading-[1.08] tracking-tight"
           >
             I turn rough ideas into <span className="text-[#94A3B8]">working software</span> people can use.
           </motion.h2>
 
-          <motion.p variants={itemVariants} className="text-[#9AA0B2] text-lg md:text-xl leading-relaxed max-w-3xl">
+          <motion.p variants={itemVariants} className="text-[#A8B0C0] text-lg md:text-xl leading-relaxed max-w-3xl">
             I am a Computer Science student at RVITM Bangalore focused on frontend engineering, real-time web apps, and developer tools. I like taking messy requirements, finding the core user flow, and shipping interfaces that feel clear under real use.
           </motion.p>
 
-          <div className="mt-10 grid gap-4">
+          <div className="mt-12 grid md:grid-cols-3 border-t border-l border-[#2D3442]">
             {focusAreas.map((area) => (
               <motion.div
                 key={area.label}
                 variants={itemVariants}
-                className="group border-l border-[#2D3442] pl-5 py-1"
+                className="group min-h-[180px] md:min-h-[210px] p-5 md:p-6 border-r border-b border-[#2D3442] bg-[#0B0D10]/35 hover:bg-[#11161D] transition-colors duration-300"
               >
+                <span className="font-mono text-[9px] text-[#566072] block mb-10">0{focusAreas.indexOf(area) + 1}</span>
                 <h3 className="text-[#EAEAF0] font-medium text-lg mb-2 group-hover:text-white transition-colors">
                   {area.label}
                 </h3>
@@ -108,11 +110,12 @@ const About: React.FC = () => {
 
           <motion.div
             variants={itemVariants}
-            className="mt-12 p-6 border-l-2 border-[#94A3B8]/30 bg-[#141821]/50 backdrop-blur-sm relative overflow-hidden"
+            className="mt-8 p-6 md:px-8 border border-[#2D3442] bg-[#141821]/50 backdrop-blur-sm relative overflow-hidden flex flex-col md:flex-row md:items-center md:justify-between gap-3"
           >
             <p className="text-[#EAEAF0] relative z-10">
               Build the smallest useful version, test it honestly, then improve what matters.
             </p>
+            <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#667085] shrink-0">Working principle / 01</span>
             <motion.div
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}

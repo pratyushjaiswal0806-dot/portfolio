@@ -62,21 +62,37 @@ export default function BootLoader({ onComplete }: BootLoaderProps) {
 
   useEffect(() => {
     if (!onComplete) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter') {
+        onComplete();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
     const timer = setTimeout(() => {
       onComplete();
     }, 3800);
-    return () => clearTimeout(timer);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timer);
+    };
   }, [onComplete]);
 
   return (
     <motion.div
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, filter: 'blur(10px)' }}
+      exit={{ opacity: 0, filter: 'blur(12px)' }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={styles['background-container']}
+      onClick={onComplete}
+      role="dialog"
+      aria-label="System Initializing"
     >
       <div className={styles.container}>
-        <svg viewBox={`0 0 ${MAX_WIDTH} ${MAX_HEIGHT}`}>
+        <svg viewBox={`0 0 ${MAX_WIDTH} ${MAX_HEIGHT}`} className="w-full h-auto">
           <g>
             {gridSprings.map(({ x2 }, index) => (
               <animated.line

@@ -6,16 +6,25 @@
   bottom: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background-color: #0B0D10;
   color: #94A3B8;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 10000;
+  padding: 1.5rem;
 }
 
 .container {
-  max-width: 800px;
-  width: 50vw;
+  max-width: 600px;
+  width: 85vw;
   margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .container {
+    width: 45vw;
+  }
 }

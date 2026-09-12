@@ -17,15 +17,11 @@ const AnimationLab = React.lazy(() => import('./components/sections/AnimationLab
 type ViewState = 'home' | 'lab';
 
 /** Check loader eligibility synchronously so the very first render
- *  shows the loader overlay — no single-frame flash of page content. */
+ *  shows the loader overlay on both web and android. */
 const shouldShowLoader = (): boolean => {
   if (typeof window === 'undefined') return true;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const compactViewport = window.matchMedia('(max-width: 767px)').matches;
-  const hasSeenLoader = sessionStorage.getItem('pj-loader-seen') === 'true';
-  // The loader is a desktop flourish. On a phone it delays the first useful
-  // interaction and competes with the hero for the small initial viewport.
-  return !hasSeenLoader && !reducedMotion && !compactViewport;
+  return !reducedMotion;
 };
 
 const App: React.FC = () => {

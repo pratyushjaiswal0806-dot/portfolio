@@ -72,9 +72,12 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
         transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed top-0 left-0 w-full flex justify-between items-center z-40 transition-all duration-500 ${
           scrolled 
-            ? 'p-4 md:py-4 md:px-8 bg-[#0B0D10]/80 backdrop-blur-md border-b border-[#2D3442]/30 shadow-lg' 
-            : 'p-6 md:p-8 bg-transparent border-b border-transparent'
+            ? 'p-4 md:py-4 md:px-8 bg-[#0B0D10]/85 backdrop-blur-md border-b border-[#2D3442]/40 shadow-lg' 
+            : 'p-5 sm:p-6 md:p-8 bg-transparent border-b border-transparent'
         }`}
+        style={{
+          paddingTop: `max(${scrolled ? '1rem' : '1.25rem'}, env(safe-area-inset-top))`
+        }}
       >
         <div
           className="flex items-center gap-4 cursor-pointer"
@@ -173,7 +176,11 @@ const Navbar: React.FC<NavbarProps> = ({ onViewChange, currentView = 'home' }) =
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-[#0B0D10]/95 backdrop-blur-xl z-30 flex flex-col items-center justify-center lg:hidden"
+            className="fixed inset-0 bg-[#0B0D10]/95 backdrop-blur-2xl z-50 flex flex-col items-center justify-center lg:hidden px-6"
+            style={{
+              paddingTop: 'max(2rem, env(safe-area-inset-top))',
+              paddingBottom: 'max(2rem, env(safe-area-inset-bottom))'
+            }}
           >
             <motion.div className="flex flex-col items-center gap-8">
               {currentView === 'home' && navItems.map((item, index) => (

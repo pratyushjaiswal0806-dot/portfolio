@@ -123,14 +123,26 @@
          FAVICON & THEME
     ═══════════════════════════════════════════════ -->
     <meta name="theme-color" content="#0B0D10" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
     <style>
       body {
         background-color: #0B0D10;
         color: #EAEAF0;
-        cursor: none;
         font-family: 'DM Sans', sans-serif;
         overflow-x: hidden;
+      }
+      @media (pointer: fine) {
+        body {
+          cursor: none;
+        }
+      }
+      @media (pointer: coarse), (hover: none) {
+        body {
+          cursor: auto !important;
+        }
       }
       h1, h2, h3, h4, h5, h6 {
         font-family: 'Space Grotesk', sans-serif;

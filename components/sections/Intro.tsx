@@ -77,7 +77,7 @@ const Intro: React.FC = () => {
   const bgOpacity = useTransform(exitProgress, [0, 0.6], [1, 0]);
 
   return (
-    <section ref={containerRef} className="py-20 sm:py-24 md:py-32 px-5 sm:px-6 md:px-12 lg:px-24 bg-[#0B0D10] relative z-20 overflow-hidden min-h-[62vh] flex flex-col justify-center">
+    <section ref={containerRef} className="py-14 sm:py-20 md:py-32 px-5 sm:px-6 md:px-12 lg:px-24 bg-[#0B0D10] relative z-20 overflow-hidden min-h-0 md:min-h-[62vh] flex flex-col justify-center">
 
       {/* Background Elements with Subtle Scrolling Grid */}
       <motion.div
@@ -173,18 +173,23 @@ interface ScrollWordProps {
 }
 
 const ScrollWord: React.FC<ScrollWordProps> = ({ word, isHighlight, index, total, progress, shouldReduceMotion }) => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
   // Calculate the range for this specific word based on scroll
   const step = 0.9 / total; // Use 90% of the scroll space for text
   const start = index * step;
   const end = start + 0.25; // Overlap slightly for fluid feel
 
-  const opacity = useTransform(progress, [start, end], [0.12, 1]);
-  const y = useTransform(progress, [start, end], [15, 0]);
+  const opacity = useTransform(progress, [start, end], [isMobile ? 0.35 : 0.12, 1]);
+  const y = useTransform(progress, [start, end], [isMobile ? 6 : 15, 0]);
   const blur = useTransform(progress, [start, end], [4, 0]);
-  const color = useTransform(progress, [start, end], ["#1F2937", isHighlight ? "#94A3B8" : "#EAEAF0"]); // Darker gray to highlight/white
+  const color = useTransform(progress, [start, end], [isMobile ? "#555A6B" : "#1F2937", isHighlight ? "#94A3B8" : "#EAEAF0"]);
 
-  // Dynamic filter string
-  const filter = useTransform(blur, (v) => `blur(${v}px)`);
+  // On mobile devices, avoid heavy per-word CSS blur filters for smooth 90Hz/120Hz refresh rates
+  const filter = useTransform(blur, (v) => isMobile ? "none" : `blur(${v}px)`);
 
   return (
     <span className="relative inline-block">

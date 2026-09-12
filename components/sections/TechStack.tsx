@@ -128,7 +128,7 @@ const TechStack: React.FC = () => {
                 <motion.div
                   key={tech.name}
                   variants={fadeUp}
-                  className="group relative min-h-[126px] sm:min-h-36 border border-[#252C38] bg-[#11151C] p-3 sm:p-4 flex flex-col justify-between overflow-hidden transition-colors duration-300 hover:border-[#526175]"
+                  className="group relative min-h-[126px] sm:min-h-36 border border-[#252C38] bg-[#11151C] p-3 sm:p-4 flex flex-col justify-between overflow-hidden transition-all duration-200 hover:border-[#526175] active:scale-[0.98] active:border-[#94A3B8]/50"
                 >
                   <span className="absolute top-0 left-0 h-[2px] w-10 transition-all duration-500 group-hover:w-full" style={{ backgroundColor: tech.color }} />
                   <div className="flex items-start justify-between gap-3">
@@ -163,7 +163,11 @@ const TechStack: React.FC = () => {
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#667085]">Index / Ecosystem</p>
                 <h3 className="text-lg font-medium text-[#EAEAF0] mt-1.5">Tools by discipline</h3>
               </div>
-              <span className="hidden sm:block font-mono text-[9px] uppercase tracking-[0.16em] text-[#555F70]">Hover to inspect</span>
+              <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-[#555F70]">
+                <span className="hidden sm:inline">Hover</span>
+                <span className="sm:inline hidden"> </span>
+                <span className="sm:hidden">Tap</span> to inspect
+              </span>
             </div>
 
             <div className="divide-y divide-[#252C38]">
@@ -178,22 +182,22 @@ const TechStack: React.FC = () => {
                     <span className="font-mono text-[9px] text-[#4E5869] md:block md:mt-3">0{categoryIndex + 1}</span>
                   </div>
 
-                  <div className={`grid ${category.items.length === 2 ? 'grid-cols-2' : 'grid-cols-4 md:grid-cols-2 xl:grid-cols-4'} gap-px bg-[#252C38]`}>
+                  <div className={`grid ${category.items.length === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-4 md:grid-cols-2 xl:grid-cols-4'} gap-px bg-[#252C38]`}>
                     {category.items.map((key) => {
                       const tech = technologyMap[key];
                       return (
                         <div
                           key={tech.name}
-                            className="group min-h-[78px] sm:min-h-[92px] bg-[#0D1015] px-1.5 sm:px-3 py-3 sm:py-4 flex flex-col justify-center items-center text-center gap-2 transition-colors duration-300 hover:bg-[#141922]"
+                          className="group min-h-[78px] sm:min-h-[92px] bg-[#0D1015] px-2 sm:px-3 py-3 sm:py-4 flex flex-col justify-center items-center text-center gap-2 transition-all duration-200 hover:bg-[#141922] active:bg-[#181F2B] active:scale-[0.97]"
                         >
                           <img
                             src={tech.icon}
                             alt=""
                             aria-hidden="true"
-                              className="w-6 h-6 sm:w-7 sm:h-7 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
-                              style={{ filter: `${tech.name === 'Express' || tech.name === 'GitHub' ? 'invert(1) ' : ''}drop-shadow(0 0 10px ${tech.color}18)` }}
+                            className="w-6 h-6 sm:w-7 sm:h-7 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
+                            style={{ filter: `${tech.name === 'Express' || tech.name === 'GitHub' ? 'invert(1) ' : ''}drop-shadow(0 0 10px ${tech.color}18)` }}
                           />
-                            <span className="text-[10px] sm:text-xs text-[#A8B0C0] group-hover:text-[#EAEAF0] transition-colors leading-tight">{tech.name}</span>
+                          <span className="text-[11px] sm:text-xs text-[#A8B0C0] group-hover:text-[#EAEAF0] transition-colors leading-tight font-medium">{tech.name}</span>
                         </div>
                       );
                     })}

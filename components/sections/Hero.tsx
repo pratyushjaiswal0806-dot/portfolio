@@ -84,7 +84,7 @@ const Hero: React.FC = () => {
   const maskImage = useMotionTemplate`radial-gradient(${smoothMaskRadius}px circle at ${mouseX}px ${mouseY}px, black, transparent)`;
 
   return (
-    <section ref={containerRef} className="relative min-h-screen lg:h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0B0D10] pt-28 pb-16 sm:py-24 lg:py-0">
+    <section ref={containerRef} className="relative lg:min-h-screen lg:h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0B0D10] pt-24 pb-8 sm:py-20 lg:py-0">
       
       {/* LAYER 0: Deep/Background Grid */}
       <motion.div 
@@ -115,7 +115,7 @@ const Hero: React.FC = () => {
       </motion.div>
 
       {/* LAYER 2: Main Content Container */}
-      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 items-center">
+      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
         
         {/* LEFT COLUMN: Identity & Manifesto */}
         <div className="lg:col-span-7 flex flex-col items-start">
@@ -135,9 +135,28 @@ const Hero: React.FC = () => {
             rotateX: useTransform(smoothMouseY, [0, 1000], [5, -5]), 
             rotateY: useTransform(smoothMouseX, [0, 1000], [-5, 5]) 
           }}
-          className="lg:col-span-5 flex justify-center lg:justify-end perspective-1000 mt-2 sm:mt-6 lg:mt-0"
+          className="lg:col-span-5 flex flex-col items-center lg:items-end perspective-1000 mt-4 sm:mt-6 lg:mt-0"
         >
           <HeroImage />
+
+          {/* Mobile Scroll Indicator */}
+          <motion.div 
+            style={{ opacity: scrollIndicatorOpacity }}
+            className="md:hidden flex flex-col items-center justify-center gap-1.5 mt-5 pb-1 text-[#818C9D] cursor-pointer"
+            onClick={() => {
+              const introEl = document.getElementById('tech-stack');
+              if (introEl) introEl.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <span className="text-[9px] font-mono uppercase tracking-[0.2em] opacity-60">Scroll to Explore</span>
+            <div className="w-4 h-6 border border-[#2D3442] rounded-full flex justify-center p-0.5">
+              <motion.div 
+                className="w-1 h-1.5 bg-[#94A3B8] rounded-full"
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </div>
+          </motion.div>
         </motion.div>
       </div>
 
@@ -313,7 +332,7 @@ const RotatingRole = ({ shouldReduceMotion }: { shouldReduceMotion: boolean | nu
   }, [shouldReduceMotion]);
 
   return (
-    <div className="h-[1.1em] overflow-hidden relative inline-block align-bottom ml-2 md:ml-4 w-full md:w-auto">
+    <div className="h-[1.1em] overflow-hidden relative inline-block align-bottom ml-1.5 md:ml-4 w-auto">
       <AnimatePresence mode="wait">
         <motion.span
           key={index}
@@ -503,7 +522,11 @@ const HeroImage = () => {
         wheelApi.start({ wheelY: wy });
       },
     },
-    { target: domTarget, eventOptions: { passive: false } }
+    { 
+      target: domTarget, 
+      drag: { filterTaps: true, preventDefault: false },
+      eventOptions: { passive: true } 
+    }
   );
 
   return (

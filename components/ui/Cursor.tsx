@@ -43,12 +43,26 @@ const Cursor: React.FC = () => {
   const dotX = useSpring(cursorX, dotSpringConfig);
   const dotY = useSpring(cursorY, dotSpringConfig);
 
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
   useEffect(() => {
-    // Check user preference for motion
+    // Check user preference for motion and touch devices
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const touchQuery = window.matchMedia('(hover: none), (pointer: coarse)');
     setReducedMotion(mediaQuery.matches);
+    setIsTouchDevice(touchQuery.matches || 'ontouchstart' in window || window.innerWidth < 768);
+
     const listener = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    const touchListener = (e: MediaQueryListEvent) => setIsTouchDevice(e.matches);
     mediaQuery.addEventListener('change', listener);
+    touchQuery.addEventListener('change', touchListener);
+
+    if (touchQuery.matches || 'ontouchstart' in window || window.innerWidth < 768) {
+      return () => {
+        mediaQuery.removeEventListener('change', listener);
+        touchQuery.removeEventListener('change', touchListener);
+      };
+    }
 
     const moveCursor = (e: MouseEvent) => {
       // Offset by radius (default 8px)
@@ -118,7 +132,7 @@ const Cursor: React.FC = () => {
     };
   }, [cursorX, cursorY, isVisible]);
 
-  if (reducedMotion) return null;
+  if (reducedMotion || isTouchDevice) return null;
 
   // Determine size of the outer ring
   const getRingSize = () => {

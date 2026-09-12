@@ -69,6 +69,28 @@ const Projects: React.FC = () => {
     return () => window.removeEventListener('resize', updateMobile);
   }, []);
 
+  // Android system back button & gesture integration
+  useEffect(() => {
+    if (selectedId) {
+      window.history.pushState({ projectModal: selectedId }, '');
+      const handlePopState = () => {
+        setSelectedId(null);
+      };
+      window.addEventListener('popstate', handlePopState);
+      return () => {
+        window.removeEventListener('popstate', handlePopState);
+      };
+    }
+  }, [selectedId]);
+
+  const closeModal = () => {
+    if (window.history.state?.projectModal) {
+      window.history.back();
+    } else {
+      setSelectedId(null);
+    }
+  };
+
   // Transform that moves the project list horizontally
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-55%"]);
   const useStaticProjectList = isMobile || shouldReduceMotion;
@@ -126,7 +148,7 @@ const Projects: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setSelectedId(null)}
+              onClick={closeModal}
               className="absolute inset-0 bg-black/85 backdrop-blur-md"
             />
 
@@ -137,11 +159,14 @@ const Projects: React.FC = () => {
                 transition={springTransition}
             className="relative w-full max-w-5xl max-h-[92vh] bg-[#141821] rounded-xl md:rounded-2xl border border-[#2D3442] z-10 shadow-2xl flex flex-col overflow-hidden"
               >
-                {/* Fixed Close Button */}
-                <div className="absolute top-4 right-4 z-50">
+                {/* Fixed Close Button with Safe Area Offset */}
+                <div
+                  className="absolute right-4 z-50"
+                  style={{ top: 'max(1rem, env(safe-area-inset-top))' }}
+                >
                   <button
-                    onClick={(e) => { e.stopPropagation(); setSelectedId(null); }}
-                    className="p-3 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors backdrop-blur-md border border-white/10 shadow-lg"
+                    onClick={(e) => { e.stopPropagation(); closeModal(); }}
+                    className="p-3 bg-black/60 hover:bg-black/80 active:scale-95 text-white rounded-full transition-all backdrop-blur-md border border-white/10 shadow-lg"
                     aria-label="Close details"
                   >
                     <X size={20} />
@@ -317,7 +342,7 @@ const ProjectCard: React.FC<{
       style={disableMotion ? { scale: 1, opacity: 1, filter: "none" } : { scale, opacity, filter }}
       data-cursor="project-card"
       aria-label={`Open ${project.title} project details`}
-      className={`relative w-full h-[400px] sm:h-[430px] bg-[#141821] overflow-hidden cursor-pointer group border border-[#2D3442] flex-shrink-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#94A3B8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0B0D10] ${disableMotion ? 'md:h-[460px]' : 'md:w-[600px] md:h-[60vh]'}`}
+      className={`relative w-full h-[400px] sm:h-[430px] bg-[#141821] overflow-hidden cursor-pointer group border border-[#2D3442] flex-shrink-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#94A3B8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0B0D10] active:scale-[0.985] active:border-[#94A3B8]/60 transition-transform ${disableMotion ? 'md:h-[460px]' : 'md:w-[600px] md:h-[60vh]'}`}
     >
       <motion.img
         layoutId={`image-${project.id}`}

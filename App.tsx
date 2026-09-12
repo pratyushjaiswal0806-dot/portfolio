@@ -10,6 +10,7 @@ import Contact from './components/sections/Contact';
 import Footer from './components/layout/Footer';
 import Cursor from './components/ui/Cursor';
 import BootLoader from './components/ui/BootLoader';
+import MobileThumbDock from './components/layout/MobileThumbDock';
 
 const AnimationLab = React.lazy(() => import('./components/sections/AnimationLab'));
 
@@ -41,7 +42,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const checkTouch = () => {
-      setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
+      const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      setIsTouch(hasTouch || isCoarse || window.innerWidth < 768);
     };
     checkTouch();
     window.addEventListener('resize', checkTouch);
@@ -100,6 +103,7 @@ const App: React.FC = () => {
                 <About />
                 <Contact />
                 <Footer />
+                <MobileThumbDock />
               </motion.div>
             ) : (
               <motion.div

@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
 import Magnetic from '../ui/Magnetic';
-import { Linkedin, Mail, Phone, Github, FileDown } from 'lucide-react';
+import { Linkedin, Mail, Phone, Github, FileDown, Check } from 'lucide-react';
 import { PREMIUM_EASE, staggerContainer, fadeUp } from '../ui/motion';
 
 const channels = [
@@ -15,9 +15,19 @@ const resumeHref = '/Pratyush.Jaiswal.pdf';
 
 const Contact: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [copiedLabel, setCopiedLabel] = useState<string | null>(null);
   const shouldReduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.6, 0]);
+
+  const handleCopy = (e: React.MouseEvent, label: string, value: string) => {
+    if (label === 'Email' || label === 'Phone') {
+      const copyVal = label === 'Phone' ? value.replace(/\s+/g, '') : value;
+      navigator.clipboard?.writeText(copyVal);
+      setCopiedLabel(label);
+      setTimeout(() => setCopiedLabel(null), 2200);
+    }
+  };
 
   return (
     <section
@@ -98,7 +108,7 @@ const Contact: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <a
                 href="mailto:pratyushjaiswal0806@gmail.com"
-                className="group relative inline-flex justify-center items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-[#EAEAF0] text-[#0B0D10] text-sm sm:text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(148,163,184,0.1)] hover:shadow-[0_0_30px_rgba(148,163,184,0.25)]"
+                className="group relative inline-flex justify-center items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-[#EAEAF0] text-[#0B0D10] text-sm sm:text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:bg-white active:bg-white active:scale-[0.98] transition-all duration-300 shadow-[0_0_20px_rgba(148,163,184,0.1)] hover:shadow-[0_0_30px_rgba(148,163,184,0.25)]"
                 data-cursor="hover"
               >
                 GET IN TOUCH
@@ -111,7 +121,7 @@ const Contact: React.FC = () => {
               <a
                 href={resumeHref}
                 download
-                className="inline-flex justify-center items-center gap-3 px-8 py-4 sm:py-5 border border-[#2D3442] text-[#EAEAF0] text-sm sm:text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:border-[#94A3B8] hover:text-white transition-all duration-300"
+                className="inline-flex justify-center items-center gap-3 px-8 py-4 sm:py-5 border border-[#2D3442] text-[#EAEAF0] text-sm sm:text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:border-[#94A3B8] hover:text-white active:scale-[0.98] active:border-[#94A3B8] transition-all duration-300"
                 data-cursor="hover"
               >
                 Resume
@@ -122,7 +132,7 @@ const Contact: React.FC = () => {
         </motion.div>
 
         {/* Divider */}
-        <div className="relative mb-20">
+        <div className="relative mb-16 sm:mb-20">
           <div className="h-px bg-gradient-to-r from-transparent via-[#2D3442]/60 to-transparent" />
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#2D3442]" />
         </div>
@@ -142,10 +152,11 @@ const Contact: React.FC = () => {
               href={item.href}
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noreferrer' : undefined}
-              className="min-h-[160px] md:min-h-[180px] p-3 sm:p-5 border-r border-b border-[#2D3442] bg-[#0D1015]/60 flex flex-col items-center justify-center text-center group hover:bg-[#141922] transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#94A3B8]"
+              onClick={(e) => handleCopy(e, item.label, item.value)}
+              className="min-h-[160px] md:min-h-[180px] p-3 sm:p-5 border-r border-b border-[#2D3442] bg-[#0D1015]/60 flex flex-col items-center justify-center text-center group hover:bg-[#141922] active:bg-[#181F2B] active:scale-[0.98] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#94A3B8]"
             >
-              <div className="w-12 h-12 bg-[#141821]/80 border border-[#2D3442]/80 flex items-center justify-center mb-4 group-hover:bg-[#EAEAF0] group-hover:border-transparent group-hover:shadow-[0_0_24px_rgba(148,163,184,0.15)] transition-all duration-500">
-                <item.icon className="w-5 h-5 text-[#94A3B8] group-hover:text-[#0B0D10] transition-colors duration-500" />
+              <div className="w-12 h-12 bg-[#141821]/80 border border-[#2D3442]/80 flex items-center justify-center mb-4 group-hover:bg-[#EAEAF0] group-hover:border-transparent group-hover:shadow-[0_0_24px_rgba(148,163,184,0.15)] group-active:scale-95 transition-all duration-300">
+                <item.icon className="w-5 h-5 text-[#94A3B8] group-hover:text-[#0B0D10] transition-colors duration-300" />
               </div>
               <span className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-widest mb-1.5">
                 {item.label}
@@ -156,6 +167,22 @@ const Contact: React.FC = () => {
             </motion.a>
           ))}
         </motion.div>
+
+        {/* Copy Notification Toast */}
+        <AnimatePresence>
+          {copiedLabel && (
+            <motion.div
+              initial={{ opacity: 0, y: 16, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-[#141821]/95 backdrop-blur-md border border-[#3E4756] text-[#EAEAF0] text-xs font-mono rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.8)] flex items-center gap-2 pointer-events-none"
+            >
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Copied {copiedLabel} to clipboard!</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
       </div>
     </section>

@@ -135,17 +135,19 @@
     cursor: auto !important;
   }
 
-  a, button {
-    -webkit-tap-highlight-color: transparent;
+  * {
+    -webkit-tap-highlight-color: transparent !important;
   }
 }
 
 @media (max-width: 767px) {
   html {
     scroll-padding-top: 5rem;
+    overscroll-behavior-y: contain;
   }
 
   body {
     cursor: auto !important;
   }
 }
+

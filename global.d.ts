@@ -1,24 +1,12 @@
-declare module '*.png' {
-  const value: string;
-  export default value;
+/* Asset, CSS and `?raw` module types come from vite/client (see tsconfig). */
+
+declare module '*.mdx' {
+  import type { ComponentType } from 'react';
+  export const frontmatter: Record<string, unknown>;
+  const MDXContent: ComponentType<{ components?: Record<string, ComponentType<any>> }>;
+  export default MDXContent;
 }
 
-declare module '*.jpg' {
-  const value: string;
-  export default value;
-}
-
-declare module '*.svg' {
-  const value: string;
-  export default value;
-}
-
-declare module '*.module.css' {
-  const classes: { [key: string]: string };
-  export default classes;
-}
-
-declare module '*.css' {
-  const content: { [key: string]: string };
-  export default content;
-}
+/** Injected by vite.config.ts `define`. */
+declare const __BUILD_SHA__: string;
+declare const __BUILD_DATE__: string;

@@ -1,65 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'react-router';
 import { motion, AnimatePresence, useScroll } from 'framer-motion';
-import { Cpu, FolderGit2, User, Mail, FileDown } from 'lucide-react';
-
-interface MobileThumbDockProps {
-  onSectionClick?: (sectionId: string) => void;
-}
+import { Home, FolderGit2, User, FlaskConical, Search, FileDown } from 'lucide-react';
+import { personal } from '../../data/personal';
+import { useSiteUI } from '../../lib/site-ui';
 
 const navItems = [
-  { id: 'tech-stack', label: 'Stack', icon: Cpu },
-  { id: 'projects', label: 'Work', icon: FolderGit2 },
-  { id: 'about', label: 'About', icon: User },
-  { id: 'contact', label: 'Contact', icon: Mail },
+  { to: '/', label: 'Home', icon: Home },
+  { to: '/work', label: 'Work', icon: FolderGit2 },
+  { to: '/about', label: 'About', icon: User },
+  { to: '/lab', label: 'Lab', icon: FlaskConical },
 ];
 
-const MobileThumbDock: React.FC<MobileThumbDockProps> = ({ onSectionClick }) => {
-  const [activeSection, setActiveSection] = useState<string>('');
+const isActive = (pathname: string, to: string) =>
+  to === '/' ? pathname === '/' : pathname === to || pathname.startsWith(to + '/');
+
+const MobileThumbDock: React.FC = () => {
+  const location = useLocation();
+  const { openPalette } = useSiteUI();
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const [lastScrollY, setLastScrollY] = useState<number>(0);
+  const lastScrollY = useRef(0);
   const { scrollY } = useScroll();
 
   useEffect(() => {
     return scrollY.on('change', (latest) => {
-      const diff = latest - lastScrollY;
+      const diff = latest - lastScrollY.current;
       // Hide on intentional downward scroll past hero, reveal on upward scroll
       if (latest > 180 && diff > 8) {
         setIsVisible(false);
       } else if (diff < -6 || latest < 120) {
         setIsVisible(true);
       }
-      setLastScrollY(latest);
-
-      // Section tracking for active tab
-      const sections = ['tech-stack', 'projects', 'about', 'contact'];
-      const scrollPosition = latest + window.innerHeight * 0.45;
-
-      let currentActive = '';
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            currentActive = section;
-            break;
-          }
-        }
-      }
-      setActiveSection(currentActive);
+      lastScrollY.current = latest;
     });
-  }, [scrollY, lastScrollY]);
+  }, [scrollY]);
 
-  const handleNavClick = (sectionId: string) => {
-    if (onSectionClick) {
-      onSectionClick(sectionId);
-    } else {
-      const el = document.getElementById(sectionId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
+  useEffect(() => {
+    setIsVisible(true);
+  }, [location.pathname]);
 
   return (
     <AnimatePresence>
@@ -72,27 +50,27 @@ const MobileThumbDock: React.FC<MobileThumbDockProps> = ({ onSectionClick }) => 
           className="fixed bottom-3 inset-x-3 z-40 md:hidden max-w-sm mx-auto pointer-events-auto"
           style={{
             paddingBottom: 'max(0px, env(safe-area-inset-bottom))',
+            viewTransitionName: 'site-dock',
           }}
           aria-label="Quick mobile navigation dock"
         >
-          <div className="flex items-center justify-between gap-1 p-1.5 bg-[#141821]/90 backdrop-blur-xl border border-[#2D3442]/80 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.65)] ring-1 ring-white/5">
+          <div className="flex items-center justify-between gap-1 p-1.5 bg-steel/90 backdrop-blur-xl border border-line/80 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.65)] ring-1 ring-white/5">
             {/* Navigation pills */}
-            <div className="flex items-center gap-0.5 flex-1">
+            <nav className="flex items-center gap-0.5 flex-1" aria-label="Pages">
               {navItems.map((item) => {
-                const isActive = activeSection === item.id;
+                const active = isActive(location.pathname, item.to);
                 const Icon = item.icon;
                 return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleNavClick(item.id)}
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    viewTransition
+                    aria-current={active ? 'page' : undefined}
                     className={`relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-200 active:scale-95 ${
-                      isActive
-                        ? 'text-[#EAEAF0]'
-                        : 'text-[#818C9D] hover:text-[#CCD2DE]'
+                      active ? 'text-ice' : 'text-[#818C9D] hover:text-[#CCD2DE]'
                     }`}
-                    aria-label={`Jump to ${item.label}`}
                   >
-                    {isActive && (
+                    {active && (
                       <motion.div
                         layoutId="active-thumb-pill"
                         className="absolute inset-0 bg-[#252C38] rounded-xl border border-[#3E4756]/60 shadow-inner"
@@ -103,23 +81,32 @@ const MobileThumbDock: React.FC<MobileThumbDockProps> = ({ onSectionClick }) => 
                     <span className="relative z-10 font-mono text-[9px] uppercase tracking-wider font-semibold">
                       {item.label}
                     </span>
-                  </button>
+                  </Link>
                 );
               })}
-            </div>
+            </nav>
 
             {/* Subtle Divider */}
-            <div className="w-[1px] h-7 bg-[#2D3442]/80 my-auto mx-1" />
+            <div className="w-[1px] h-7 bg-line/80 my-auto mx-0.5" />
+
+            <button
+              type="button"
+              onClick={openPalette}
+              className="flex items-center justify-center w-10 h-10 rounded-xl text-[#818C9D] active:bg-[#252C38] active:scale-95 transition-transform shrink-0"
+              aria-label="Search pages, projects and actions"
+            >
+              <Search className="w-4 h-4" />
+            </button>
 
             {/* Quick Resume Download Action */}
             <a
-              href="/Pratyush.Jaiswal.pdf"
+              href={personal.resume}
               download
-              className="flex items-center justify-center gap-1 px-3 py-2.5 bg-[#EAEAF0] active:bg-white text-[#0B0D10] rounded-xl font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm transition-transform active:scale-95 shrink-0"
+              className="flex items-center justify-center gap-1 px-3 py-2.5 bg-ice active:bg-white text-obsidian rounded-xl font-mono text-[10px] font-bold uppercase tracking-wider shadow-xs transition-transform active:scale-95 shrink-0"
               aria-label="Download Resume PDF"
             >
               <span>CV</span>
-              <FileDown className="w-3.5 h-3.5 text-[#0B0D10]" />
+              <FileDown className="w-3.5 h-3.5 text-obsidian" />
             </a>
           </div>
         </motion.aside>

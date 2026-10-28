@@ -132,9 +132,9 @@ The typography system relies on two fonts connected to the architectural design 
 *   **Interactive State:** Scaling/blur transformations. When hovered, the cursor ring expands and displays the text `"VIEW"` in its center.
 *   **Gradients:** Deep dark gradient overlay (`bg-gradient-to-t from-[#0B0D10] to-transparent`) hides bottom descriptions until hover.
 
-#### 2. Motion Lab Module Cards (Glassmorphism / 3D Tilt)
-*   **Structure:** Translucent midnight steel backdrop (`bg-[#141821]/50`), thin outline (`border-[#2D3442]`), `rounded-lg` corners.
-*   **Interaction:** 3D Tilt effect calculated dynamically via cursor relative position coordinates. Mouse glow spotlight sweeps are masked across the card structure on cursor movement.
+#### 2. Motion Lab Experiments
+*   **Structure:** Each experiment is a row, not a card: title, plain-language explanation, an "On this site" link and controls on the left; a stage on the right (`bg-panel`, 40px grid) with Demo / Code tabs.
+*   **Rule:** Every experiment isolates an animation the site really uses, with the same values. Code snippets update live with the controls.
 
 ---
 
@@ -215,49 +215,23 @@ export const PREMIUM_EASE = [0.16, 1, 0.3, 1];
 
 ## 11. Design Tokens
 
-### CSS Variables (Standard Implementation)
-```css
-:root {
-  --bg-obsidian: #0B0D10;
-  --bg-steel: #141821;
-  --border-steel: #2D3442;
-  --text-muted: #555A6B;
-  --text-secondary: #94A3B8;
-  --text-primary: #EAEAF0;
+Tokens live in one place: the `@theme static` block at the top of `index.css` (Tailwind CSS v4). Every token is both a utility (`bg-obsidian`, `text-accent`, `border-line`) and a CSS custom property (`var(--color-obsidian)`). The `/colophon` page reads them back at runtime.
 
-  --font-primary: 'DM Sans', sans-serif;
-  --font-secondary: 'Space Grotesk', sans-serif;
+| Token | Value | Use |
+| :--- | :--- | :--- |
+| `--color-obsidian` | `#0B0D10` | Canvas |
+| `--color-panel` | `#0D1015` | Alternate section background |
+| `--color-steel` | `#141821` | Cards, panels, palette |
+| `--color-line` | `#2D3442` | Borders, grids, dividers (also the default border colour) |
+| `--color-muted` | `#555A6B` | System labels, timestamps |
+| `--color-dim` | `#667085` | Tertiary text |
+| `--color-body` | `#9AA0B2` | Paragraph text |
+| `--color-accent` | `#94A3B8` | Cool slate, the single accent |
+| `--color-ice` | `#EAEAF0` | Headings, primary text |
+| `--font-sans` / `--font-display` | DM Sans / Space Grotesk | Text / display |
+| `--ease-premium` | `cubic-bezier(0.16, 1, 0.3, 1)` | Reveals, loader exit, page transitions |
 
-  --ease-mechanical: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-system: cubic-bezier(0.22, 1, 0.36, 1);
-}
-```
-
-### Tailwind Config Tokens
-```javascript
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        obsidian: '#0B0D10',
-        steel: '#141821',
-        guide: '#2D3442',
-        muted: '#555A6B',
-        accent: '#94A3B8',
-        ice: '#EAEAF0',
-      },
-      fontFamily: {
-        sans: ['"DM Sans"', 'sans-serif'],
-        grotesk: ['"Space Grotesk"', 'sans-serif'],
-      },
-      transitionTimingFunction: {
-        mechanical: 'cubic-bezier(0.16, 1, 0.3, 1)',
-        system: 'cubic-bezier(0.22, 1, 0.36, 1)',
-      }
-    }
-  }
-}
-```
+**Project accents.** Each project in `data/projects.ts` carries `accent.base` and `accent.glow`, sampled from that project's own site. They are only used on that project's card and case-study page (kicker rule, links, facts, glow), never site-wide.
 
 ---
 
@@ -266,3 +240,5 @@ module.exports = {
 *   **Critical Visuals:** Bounding border coordinates, grids, and alignment lines *must* not be removed. They establish the technical blueprint feel.
 *   **Performance Checklist:** Velocity calculations must use lightweight tracking objects (like Framer Motion's `useVelocity` and `useSpring`) to avoid triggers of full component re-renders. Avoid modifying DOM inline directly on mouse events; instead, set CSS variables (`--mouse-x`, `--mouse-y`) and compile animations on GPU layers.
 *   **Touch Fail-safe:** Always implement checks to verify touch-capabilities. Devices with touch interfaces must completely disable cursor trails to prevent broken overlays.
+*   **Inspect mode:** Tag new sections with `data-inspect="Name"` so they show up in blueprint inspect mode. The element must already be positioned (`relative`, `fixed`, …) because the label is an absolutely positioned `::after`.
+*   **Page transitions:** Internal links use React Router's `viewTransition` prop. A `view-transition-name` must be unique on the page; project images use `project-<slug>`.

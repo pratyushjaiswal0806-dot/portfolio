@@ -7,6 +7,8 @@ const Cursor: React.FC = () => {
   const [isHeroTextHovered, setIsHeroTextHovered] = useState(false);
   const [isProjectHovered, setIsProjectHovered] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  // Demos that draw their own cursor (the Motion Lab's velocity pad) opt out with data-cursor="none".
+  const [isSuppressed, setIsSuppressed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   
   const cursorX = useMotionValue(-100);
@@ -73,6 +75,7 @@ const Cursor: React.FC = () => {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      setIsSuppressed(!!target.closest('[data-cursor="none"]'));
       
       // Project card hover state
       if (target.closest('[data-cursor="project-card"]')) {
@@ -165,7 +168,7 @@ const Cursor: React.FC = () => {
         animate={{
           backgroundColor: isProjectHovered ? '#EAEAF0' : 'rgba(234, 234, 240, 0)',
           borderColor: isProjectHovered ? '#EAEAF0' : isHovered ? '#EAEAF0' : 'rgba(148, 163, 184, 0.4)',
-          opacity: isVisible ? 1 : 0,
+          opacity: isVisible && !isSuppressed ? 1 : 0,
         }}
         transition={{ type: 'spring', stiffness: 250, damping: 25 }}
       >
@@ -192,7 +195,7 @@ const Cursor: React.FC = () => {
         }}
         animate={{
           scale: isHovered || isProjectHovered || isHeroTextHovered ? 0 : 1,
-          opacity: isVisible ? 0.8 : 0
+          opacity: isVisible && !isSuppressed ? 0.8 : 0
         }}
         transition={{ type: 'spring', stiffness: 350, damping: 30 }}
       />

@@ -1,0 +1,46 @@
+---
+title: "Rebuilding my portfolio as a real multi-page site"
+date: "2026-10-28"
+summary: "Moving from one long scroll to real routes without losing the boot loader, the blueprint grid or the motion that made the old version mine."
+tags: [react, routing, motion]
+---
+
+{/* TODO(pj): this is a draft written alongside the rebuild. Rewrite it in your own voice, then move it to content/notes/ to publish. */}
+
+The old version of this site was one long page: a hero, a few sections, and a modal for each project. It looked right, but it didn't work like a frontend developer's site. You couldn't link to a project, the back button did odd things, and there was nowhere to say more than a paragraph about anything.
+
+## What had to survive
+
+Before changing anything, I listed what I didn't want to lose:
+
+- **The boot loader.** The grid that draws itself and the blocks that drop in. It now plays once per session instead of on every refresh.
+- **The palette.** Obsidian, steel and one cool slate accent. These are now Tailwind v4 theme tokens instead of hex values copied into every file.
+- **The blueprint language.** 60px grids, section kickers and corner brackets.
+
+## Routes, not sections
+
+Every project now has its own page at `/work/:slug`. Pages other than home load lazily through React Router's route-level `lazy`, so the router fetches a page's chunk *before* it commits the navigation:
+
+```tsx
+const page = (load: () => Promise<{ default: React.ComponentType }>) => async () => ({
+  Component: (await load()).default,
+});
+
+{ path: 'work/:slug', lazy: page(() => import('./pages/CaseStudyPage')) }
+```
+
+That ordering matters for the next part.
+
+## Page transitions with the View Transitions API
+
+Links pass `viewTransition`, and the browser snapshots the old page and the new one. The new page wipes down over a faint 60px grid, an echo of the boot loader. Project images share a `view-transition-name`, so a card (or the floating preview on `/work`) morphs into the case study's hero image.
+
+Because the route chunk has already loaded, the transition never captures a loading spinner. Under `prefers-reduced-motion`, the animations are switched off and navigation is instant.
+
+## Small things for people who open devtools
+
+- <kbd>⌘K</kbd> opens a command palette for pages, projects, copying my email or replaying the loader.
+- **Inspect mode** outlines every major component with its name, and hovering one shows its size and padding, devtools style. The outlines are just CSS `attr()`. Only the hover readout needs JavaScript.
+- The hero's status panel shows the real build: the commit hash and the deploy date.
+
+The [colophon](/colophon) has the rest.

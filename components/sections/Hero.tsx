@@ -4,7 +4,10 @@ import { ArrowDown } from 'lucide-react';
 import { useSpring as useReactSpring, animated, to } from '@react-spring/web';
 import { useGesture } from '@use-gesture/react';
 import Magnetic from '../ui/Magnetic';
-import pratyushImg from '../assets/pratyush.jpg';
+import DecryptedText from '../ui/DecryptedText';
+import pratyushImg from '../assets/pratyush.webp';
+import { projects } from '../../data/projects';
+import { buildInfo, formatBuildDate } from '../../data/site';
 
 
 // Easing for mechanical/architectural feel (expo.out)
@@ -84,7 +87,7 @@ const Hero: React.FC = () => {
   const maskImage = useMotionTemplate`radial-gradient(${smoothMaskRadius}px circle at ${mouseX}px ${mouseY}px, black, transparent)`;
 
   return (
-    <section ref={containerRef} className="relative lg:min-h-screen lg:h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0B0D10] pt-24 pb-8 sm:py-20 lg:py-0">
+    <section ref={containerRef} data-inspect="Hero" className="relative lg:min-h-screen lg:h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0B0D10] pt-24 pb-8 sm:py-20 lg:py-0">
       
       {/* LAYER 0: Deep/Background Grid */}
       <motion.div 
@@ -137,14 +140,14 @@ const Hero: React.FC = () => {
           }}
           className="lg:col-span-5 flex flex-col items-center lg:items-end perspective-1000 mt-4 sm:mt-6 lg:mt-0"
         >
-          <HeroImage />
+          <HeroImage shouldReduceMotion={shouldReduceMotion} />
 
           {/* Mobile Scroll Indicator */}
           <motion.div 
             style={{ opacity: scrollIndicatorOpacity }}
             className="md:hidden flex flex-col items-center justify-center gap-1.5 mt-5 pb-1 text-[#818C9D] cursor-pointer"
             onClick={() => {
-              const introEl = document.getElementById('tech-stack');
+              const introEl = document.getElementById('approach');
               if (introEl) introEl.scrollIntoView({ behavior: 'smooth' });
             }}
           >
@@ -172,78 +175,6 @@ const Hero: React.FC = () => {
 };
 
 // --- Sub-components ---
-
-// 1. Decrypted Text Effect (Refined)
-const DecryptedText = ({ 
-    text, 
-    className, 
-    animateOnHover = true 
-}: { 
-    text: string, 
-    className?: string, 
-    animateOnHover?: boolean 
-}) => {
-    const [iteration, setIteration] = useState(0);
-    const intervalRef = useRef<any>(null); 
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#$%&^*=-+";
-
-    const runAnimation = () => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        
-        setIteration(0);
-        let localIteration = 0;
-        
-        intervalRef.current = setInterval(() => {
-            localIteration += 1 / 2.5; // Smoother, heavier feel
-            setIteration(localIteration);
-            
-            if (localIteration >= text.length) {
-                if (intervalRef.current) clearInterval(intervalRef.current);
-            }
-        }, 30);
-    };
-
-    useEffect(() => {
-        if (!animateOnHover) {
-            setIteration(text.length);
-            return;
-        }
-        runAnimation();
-        return () => {
-            if (intervalRef.current) clearInterval(intervalRef.current);
-        };
-    }, [text, animateOnHover]);
-
-    const handleHover = () => {
-        if (!animateOnHover || iteration < text.length) return;
-        runAnimation();
-    };
-
-    return (
-        <span 
-            className={`inline-flex whitespace-nowrap select-none ${className}`} 
-            onMouseEnter={handleHover}
-        >
-            {text.split("").map((char, index) => {
-                // Preserve spaces as non-breaking to maintain shape
-                if (char === " ") return <span key={index} className="w-[0.3em] inline-block">&nbsp;</span>;
-                
-                const isRevealed = index < iteration;
-                const randomChar = chars[Math.floor(Math.random() * chars.length)];
-                
-                return (
-                    <span 
-                        key={index} 
-                        className={`inline-block text-center ${isRevealed ? "" : "text-[#94A3B8] opacity-50 font-mono"}`}
-                        style={{ minWidth: char === ' ' ? 'auto' : '0.52em' }}
-                    >
-                        {isRevealed ? char : randomChar}
-                    </span>
-                );
-            })}
-        </span>
-    );
-};
 
 // 2. Scalable SVG Grid
 const BlueprintGrid = ({ color, opacity, size = 60, strokeWidth = 1 }: { color: string; opacity: number, size?: number, strokeWidth?: number }) => {
@@ -320,7 +251,7 @@ const SystemNode: React.FC<{ x: number, y: number, delay: number, mouseX: any, m
 
 // 4. Rotating Role Component
 const RotatingRole = ({ shouldReduceMotion }: { shouldReduceMotion: boolean | null }) => {
-  const roles = ["CS Student", "Problem Solver", "Builder"];
+  const roles = ["Frontend Developer", "UI Engineer", "Motion Tinkerer"];
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -380,7 +311,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
   return (
     <motion.div 
       variants={container}
-      initial="hidden"
+      initial={shouldReduceMotion ? false : 'hidden'}
       animate="show"
       style={shouldReduceMotion ? undefined : { y: contentY }}
       className="relative"
@@ -388,7 +319,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
       {/* Label */}
       <motion.div variants={itemAnim} className="mb-6 flex items-center gap-3">
         <span className="w-1.5 h-1.5 bg-[#94A3B8] rounded-full animate-pulse shadow-[0_0_8px_#94A3B8]" />
-        <span className="text-xs font-mono text-[#94A3B8] tracking-[0.2em] uppercase">Building & Learning Every Day</span>
+        <span className="text-xs font-mono text-[#94A3B8] tracking-[0.2em] uppercase">Frontend Developer · Bengaluru</span>
       </motion.div>
 
       {/* Name & Role — H1 with gradient sweep */}
@@ -421,7 +352,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
         variants={itemAnim}
         className="mt-7 sm:mt-8 text-base sm:text-lg md:text-xl text-[#9AA0B2] max-w-lg leading-relaxed font-light"
       >
-        CSE student building fast React interfaces, real-time apps, developer tools, and algorithm-focused projects.
+        I build fast, expressive web interfaces: tech-fest sites, real-time game platforms and developer tools. And I care a lot about the motion details.
       </motion.p>
 
       {/* CTA Button with Mouse Glow */}
@@ -429,7 +360,11 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
         <Magnetic strength={0.25}>
           <a 
             ref={btnRef}
-            href="#projects"
+            href="#featured"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth' });
+            }}
             onMouseMove={handleBtnMouseMove}
             className="group relative inline-flex items-center gap-4 px-8 py-4 bg-transparent text-[#EAEAF0] font-medium transition-all duration-300"
             onMouseEnter={() => onHoverChange(true)}
@@ -460,7 +395,7 @@ const HeroContent = ({ onHoverChange, onNameHoverChange, contentY, shouldReduceM
 };
 
 // 6. Hero Image (Right Side) with 3D Spring Gesture Effect
-const HeroImage = () => {
+const HeroImage = ({ shouldReduceMotion }: { shouldReduceMotion: boolean | null }) => {
   const domTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -531,7 +466,7 @@ const HeroImage = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.6, duration: 1, ease: MECHANICAL_EASE }}
       className="relative w-full max-w-[17rem] sm:max-w-[20rem] md:max-w-[26rem] aspect-[4/5] sm:aspect-[3/4] flex items-center justify-center select-none"
@@ -586,8 +521,8 @@ const ScrollIndicator = ({ opacity }: { opacity: any }) => {
       className="flex flex-col items-center gap-2 text-[#9AA0B2] pointer-events-auto cursor-pointer"
       style={{ opacity }}
       onClick={() => {
-        const skillsEl = document.getElementById('tech-stack');
-        if (skillsEl) skillsEl.scrollIntoView({ behavior: 'smooth' });
+        const nextEl = document.getElementById('approach');
+        if (nextEl) nextEl.scrollIntoView({ behavior: 'smooth' });
       }}
     >
       <span className="text-[9px] font-mono uppercase tracking-[0.2em] opacity-50">Scroll to Explore</span>
@@ -614,11 +549,11 @@ const SystemStatus = () => {
       <div className="flex flex-col items-end gap-1 font-mono text-[10px] text-[#555A6B] tracking-wider leading-tight">
         <div className="flex items-center gap-4 border-b border-[#2D3442] pb-1 mb-1">
           <span className="opacity-80">ID: PJ_01</span>
-          <span className="opacity-80">VER: 2.5.0</span>
+          <span className="opacity-80">BUILD: {buildInfo.sha.toUpperCase()}</span>
         </div>
         <div className="flex flex-col items-end opacity-70">
-           <span>COMPONENTS: 12</span>
-           <span>MOTION SYSTEMS: 08</span>
+           <span>DEPLOYED: {formatBuildDate(buildInfo.date)}</span>
+           <span>PROJECTS: {String(projects.length).padStart(2, '0')}</span>
            <span className="text-[#94A3B8]">STATUS: READY</span>
         </div>
       </div>

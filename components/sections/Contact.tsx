@@ -3,17 +3,18 @@ import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } fr
 import Magnetic from '../ui/Magnetic';
 import { Linkedin, Mail, Phone, Github, FileDown, Check } from 'lucide-react';
 import { PREMIUM_EASE, staggerContainer, fadeUp } from '../ui/motion';
+import { personal } from '../../data/personal';
 
 const channels = [
-  { icon: Mail, label: 'Email', value: 'pratyushjaiswal0806@gmail.com', href: 'mailto:pratyushjaiswal0806@gmail.com', external: false },
-  { icon: Github, label: 'GitHub', value: '@pratyushjaiswal0806-dot', href: 'https://github.com/pratyushjaiswal0806-dot', external: true },
-  { icon: Linkedin, label: 'LinkedIn', value: 'Pratyush Jaiswal', href: 'https://www.linkedin.com/in/pratyush-jaiswal-ba0b6926a', external: true },
-  { icon: Phone, label: 'Phone', value: '+91 877 095 3990', href: 'tel:+918770953990', external: false },
+  { icon: Mail, label: 'Email', value: personal.email, href: `mailto:${personal.email}`, external: false },
+  { icon: Github, label: 'GitHub', value: personal.githubHandle, href: personal.github, external: true },
+  { icon: Linkedin, label: 'LinkedIn', value: personal.name, href: personal.linkedin, external: true },
+  { icon: Phone, label: 'Phone', value: personal.phoneDisplay, href: `tel:${personal.phone}`, external: false },
 ];
 
-const resumeHref = '/Pratyush.Jaiswal.pdf';
+const resumeHref = personal.resume;
 
-const Contact: React.FC = () => {
+const Contact: React.FC<{ kicker?: string }> = ({ kicker = '05 / Contact' }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [copiedLabel, setCopiedLabel] = useState<string | null>(null);
   const shouldReduceMotion = useReducedMotion();
@@ -33,6 +34,7 @@ const Contact: React.FC = () => {
     <section
       ref={sectionRef}
       id="contact"
+      data-inspect="Contact"
       className="blueprint-section py-20 sm:py-24 md:py-28 px-5 sm:px-6 md:px-12 lg:px-24 bg-[#0B0D10] relative z-20 overflow-hidden"
       aria-label="Contact Pratyush Jaiswal"
     >
@@ -71,7 +73,7 @@ const Contact: React.FC = () => {
           transition={{ duration: 0.6, ease: PREMIUM_EASE }}
           className="section-kicker"
         >
-          05 / Contact
+          {kicker}
         </motion.span>
 
         {/* Heading with Animated SVG Water Displacement Filter */}
@@ -107,8 +109,8 @@ const Contact: React.FC = () => {
           <Magnetic strength={0.25}>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <a
-                href="mailto:pratyushjaiswal0806@gmail.com"
-                className="group relative inline-flex justify-center items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-[#EAEAF0] text-[#0B0D10] text-sm sm:text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:bg-white active:bg-white active:scale-[0.98] transition-all duration-300 shadow-[0_0_20px_rgba(148,163,184,0.1)] hover:shadow-[0_0_30px_rgba(148,163,184,0.25)]"
+                href={`mailto:${personal.email}`}
+                className="group relative inline-flex justify-center items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-[#EAEAF0] text-[#0B0D10] text-sm sm:text-base font-mono tracking-wider uppercase font-bold rounded-xs hover:bg-white active:bg-white active:scale-[0.98] transition-all duration-300 shadow-[0_0_20px_rgba(148,163,184,0.1)] hover:shadow-[0_0_30px_rgba(148,163,184,0.25)]"
                 data-cursor="hover"
               >
                 GET IN TOUCH
@@ -121,7 +123,7 @@ const Contact: React.FC = () => {
               <a
                 href={resumeHref}
                 download
-                className="inline-flex justify-center items-center gap-3 px-8 py-4 sm:py-5 border border-[#2D3442] text-[#EAEAF0] text-sm sm:text-base font-mono tracking-wider uppercase font-bold rounded-sm hover:border-[#94A3B8] hover:text-white active:scale-[0.98] active:border-[#94A3B8] transition-all duration-300"
+                className="inline-flex justify-center items-center gap-3 px-8 py-4 sm:py-5 border border-[#2D3442] text-[#EAEAF0] text-sm sm:text-base font-mono tracking-wider uppercase font-bold rounded-xs hover:border-[#94A3B8] hover:text-white active:scale-[0.98] active:border-[#94A3B8] transition-all duration-300"
                 data-cursor="hover"
               >
                 Resume
@@ -133,7 +135,7 @@ const Contact: React.FC = () => {
 
         {/* Divider */}
         <div className="relative mb-16 sm:mb-20">
-          <div className="h-px bg-gradient-to-r from-transparent via-[#2D3442]/60 to-transparent" />
+          <div className="h-px bg-linear-to-r from-transparent via-[#2D3442]/60 to-transparent" />
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#2D3442]" />
         </div>
 
@@ -153,7 +155,7 @@ const Contact: React.FC = () => {
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noreferrer' : undefined}
               onClick={(e) => handleCopy(e, item.label, item.value)}
-              className="min-h-[160px] md:min-h-[180px] p-3 sm:p-5 border-r border-b border-[#2D3442] bg-[#0D1015]/60 flex flex-col items-center justify-center text-center group hover:bg-[#141922] active:bg-[#181F2B] active:scale-[0.98] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#94A3B8]"
+              className="min-h-[160px] md:min-h-[180px] p-3 sm:p-5 border-r border-b border-[#2D3442] bg-[#0D1015]/60 flex flex-col items-center justify-center text-center group hover:bg-[#141922] active:bg-[#181F2B] active:scale-[0.98] transition-all duration-300 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#94A3B8]"
             >
               <div className="w-12 h-12 bg-[#141821]/80 border border-[#2D3442]/80 flex items-center justify-center mb-4 group-hover:bg-[#EAEAF0] group-hover:border-transparent group-hover:shadow-[0_0_24px_rgba(148,163,184,0.15)] group-active:scale-95 transition-all duration-300">
                 <item.icon className="w-5 h-5 text-[#94A3B8] group-hover:text-[#0B0D10] transition-colors duration-300" />

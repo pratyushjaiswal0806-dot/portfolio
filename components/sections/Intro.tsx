@@ -77,7 +77,7 @@ const Intro: React.FC = () => {
   const bgOpacity = useTransform(exitProgress, [0, 0.6], [1, 0]);
 
   return (
-    <section ref={containerRef} className="py-14 sm:py-20 md:py-32 px-5 sm:px-6 md:px-12 lg:px-24 bg-[#0B0D10] relative z-20 overflow-hidden min-h-0 md:min-h-[62vh] flex flex-col justify-center">
+    <section ref={containerRef} id="approach" data-inspect="Intro" className="py-14 sm:py-20 md:py-32 px-5 sm:px-6 md:px-12 lg:px-24 bg-[#0B0D10] relative z-20 overflow-hidden min-h-0 md:min-h-[62vh] flex flex-col justify-center">
 
       {/* Background Elements with Subtle Scrolling Grid */}
       <motion.div
@@ -103,7 +103,7 @@ const Intro: React.FC = () => {
       <div className="max-w-[1248px] mx-auto relative z-10">
         {/* Divider line that grows with scroll */}
         <motion.div
-          className="h-[1px] bg-gradient-to-r from-[#94A3B8] to-transparent mb-10 sm:mb-16"
+          className="h-[1px] bg-linear-to-r from-[#94A3B8] to-transparent mb-10 sm:mb-16"
           style={shouldReduceMotion ? { scaleX: 1 } : { scaleX: smoothProgress, transformOrigin: "left" }}
         />
 

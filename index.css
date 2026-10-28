@@ -2,6 +2,82 @@
    Pratyush Jaiswal Portfolio — Global Styles
    ══════════════════════════════════════════════════════════ */
 
+@import "tailwindcss";
+
+/* Docs mention lots of class names; keep them out of the scan. */
+@source not "./design.md";
+@source not "./prd.md";
+@source not "./README.md";
+
+/* ── Design tokens ─────────────────────────────────────────
+   `static` keeps every variable in the output even when no
+   utility uses it — the colophon page reads them at runtime. */
+@theme static {
+  --color-obsidian: #0B0D10;   /* app canvas */
+  --color-panel: #0D1015;      /* alternate section background */
+  --color-steel: #141821;      /* cards, modals, panels */
+  --color-line: #2D3442;       /* borders, grids, dividers */
+  --color-muted: #555A6B;      /* system labels, timestamps */
+  --color-dim: #667085;        /* tertiary text */
+  --color-body: #9AA0B2;       /* paragraph text */
+  --color-accent: #94A3B8;     /* cool slate — the one accent */
+  --color-ice: #EAEAF0;        /* headings, primary text */
+
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  /* v3 defaulted borders to a light gray; default to the steel line instead. */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-line);
+  }
+
+  html {
+    background-color: var(--color-obsidian);
+  }
+
+  body {
+    background-color: var(--color-obsidian);
+    color: var(--color-ice);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-obsidian);
+  }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--color-obsidian); }
+  ::-webkit-scrollbar-thumb { background: var(--color-steel); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+}
+
+/* The custom cursor replaces the native one on fine pointers. Links and
+   buttons get a native pointer from the UA sheet, so hide it there too. */
+@media (pointer: fine) and (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  body,
+  a,
+  button,
+  [role='button'],
+  summary,
+  label {
+    cursor: none;
+  }
+}
+
 /* Screen-reader only utility — visually hides text but keeps
    it in the DOM for search engines and assistive technologies.
    Used on the H1 "Pratyush Jaiswal" so Google reads the real
@@ -18,7 +94,7 @@
   border-width: 0;
 }
 
-/* Scrollbar hide utility (used in modal) */
+/* Scrollbar hide utility */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -100,7 +176,7 @@
 .section-kicker::before {
   width: 1.75rem;
   height: 1px;
-  background: #526175;
+  background: var(--kicker-line, #526175);
   content: '';
 }
 
@@ -109,6 +185,199 @@
     radial-gradient(circle at center, transparent 28%, rgba(148, 163, 184, 0.18) 29%, transparent 30%),
     radial-gradient(circle at center, transparent 52%, rgba(148, 163, 184, 0.13) 53%, transparent 54%),
     linear-gradient(45deg, transparent 49.5%, rgba(148, 163, 184, 0.12) 50%, transparent 50.5%);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Page transitions (View Transitions API via React Router)
+   The new page wipes down over a blueprint grid — the same
+   language the boot loader draws on first visit.
+   ══════════════════════════════════════════════════════════ */
+::view-transition-image-pair(root) {
+  background-color: var(--color-obsidian);
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.09) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+::view-transition-old(root) {
+  animation: vt-leave 260ms var(--ease-premium) both;
+}
+
+::view-transition-new(root) {
+  animation: vt-enter 620ms var(--ease-premium) 80ms both;
+}
+
+::view-transition-group(*) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease-premium);
+}
+
+@keyframes vt-leave {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+    filter: blur(6px);
+  }
+}
+
+@keyframes vt-enter {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Blueprint inspect mode — toggled from ⌘K, the nav or footer.
+   Every element carrying data-inspect gets a dashed outline and
+   a JSX-style label. Tagged elements must already be positioned.
+   ══════════════════════════════════════════════════════════ */
+html[data-inspect] [data-inspect] {
+  outline: 1px dashed rgba(148, 163, 184, 0.45);
+  outline-offset: -1px;
+}
+
+html[data-inspect] [data-inspect]::after {
+  content: '<' attr(data-inspect) ' />';
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 35;
+  padding: 3px 6px;
+  background: var(--color-accent);
+  color: var(--color-obsidian);
+  font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+/* ⌘K palette (cmdk renders these attributes) */
+[cmdk-group-heading] {
+  padding: 0.75rem 0.75rem 0.375rem;
+  color: var(--color-muted);
+  font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Motion Lab range inputs: hairline track that fills to the value, square thumb. */
+.lab-range {
+  appearance: none;
+  width: 100%;
+  height: 18px;
+  background: transparent;
+}
+.lab-range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: linear-gradient(to right, var(--color-accent) var(--fill, 0%), var(--color-line) var(--fill, 0%));
+}
+.lab-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -5.5px;
+  background: var(--color-ice);
+  border: 0;
+}
+.lab-range::-moz-range-track {
+  height: 1px;
+  background: var(--color-line);
+}
+.lab-range::-moz-range-progress {
+  height: 1px;
+  background: var(--color-accent);
+}
+.lab-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: var(--color-ice);
+  border: 0;
+  border-radius: 0;
+}
+.lab-range:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+/* Local view transitions inside the Motion Lab shouldn't wipe the whole page. */
+html.lab-vt::view-transition-old(root),
+html.lab-vt::view-transition-new(root) {
+  animation: none;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Notes — long-form prose built from the tokens
+   ══════════════════════════════════════════════════════════ */
+.prose-pj {
+  color: #A8B0C0;
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+.prose-pj > * + * { margin-top: 1.25em; }
+.prose-pj h2 {
+  margin-top: 2.4em;
+  color: var(--color-ice);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.prose-pj h3 {
+  margin-top: 2em;
+  color: var(--color-ice);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.prose-pj strong { color: var(--color-ice); font-weight: 600; }
+.prose-pj a {
+  color: var(--color-ice);
+  text-decoration: underline;
+  text-decoration-color: var(--color-line);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 200ms;
+}
+.prose-pj a:hover { text-decoration-color: var(--color-accent); }
+.prose-pj ul, .prose-pj ol { padding-left: 1.25rem; }
+.prose-pj ul { list-style: square; }
+.prose-pj ol { list-style: decimal; }
+.prose-pj li + li { margin-top: 0.5em; }
+.prose-pj li::marker { color: var(--color-accent); }
+.prose-pj blockquote {
+  border-left: 2px solid var(--color-accent);
+  padding-left: 1.25rem;
+  color: var(--color-ice);
+  font-style: italic;
+}
+.prose-pj :not(pre) > code {
+  padding: 0.15em 0.4em;
+  border: 1px solid var(--color-line);
+  background: var(--color-steel);
+  color: var(--color-ice);
+  font-size: 0.875em;
+}
+.prose-pj pre {
+  overflow-x: auto;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--color-line);
+  background: var(--color-steel) !important;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+.prose-pj hr {
+  border: 0;
+  border-top: 1px solid var(--color-line);
+  margin: 2.5em 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -150,4 +419,3 @@
     cursor: auto !important;
   }
 }
-

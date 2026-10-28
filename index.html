@@ -9,9 +9,9 @@
          Google weighs the <title> heavily for brand queries.
          "Pratyush Jaiswal" appears first → max keyword weight.
     ═══════════════════════════════════════════════ -->
-    <title>Pratyush Jaiswal | Software Developer & CS Student Portfolio</title>
-    <meta name="description" content="Pratyush Jaiswal is a Computer Science student at RVITM Bangalore, building full-stack web apps, gamified platforms, and interactive interfaces with React, TypeScript, and Supabase." />
-    <meta name="keywords" content="Pratyush Jaiswal, pratyush jaiswal portfolio, pratyush jaiswal developer, RVITM, software developer, web developer, React developer, full stack developer, Bangalore" />
+    <title>Pratyush Jaiswal — Frontend Developer</title>
+    <meta name="description" content="Pratyush Jaiswal is a frontend developer in Bengaluru building fast, expressive web interfaces — tech-fest sites, real-time game platforms and developer tools — with React, TypeScript and motion." />
+    <meta name="keywords" content="Pratyush Jaiswal, pratyush jaiswal portfolio, frontend developer, React developer, UI engineer, web developer, Next.js, TypeScript, Framer Motion, RVITM, Bengaluru" />
     <meta name="author" content="Pratyush Jaiswal" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 
@@ -27,12 +27,12 @@
     ═══════════════════════════════════════════════ -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://pratyushjaiswal.vercel.app/" />
-    <meta property="og:title" content="Pratyush Jaiswal | Software Developer & CS Student Portfolio" />
-    <meta property="og:description" content="Pratyush Jaiswal — CS student at RVITM Bangalore, building full-stack web apps and gamified platforms with React, TypeScript, and Supabase." />
+    <meta property="og:title" content="Pratyush Jaiswal — Frontend Developer" />
+    <meta property="og:description" content="Frontend developer in Bengaluru building fast, expressive web interfaces — tech-fest sites, real-time game platforms and developer tools." />
     <meta property="og:image" content="https://pratyushjaiswal.vercel.app/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Pratyush Jaiswal – Software Developer Portfolio" />
+    <meta property="og:image:alt" content="Pratyush Jaiswal — Frontend Developer" />
     <meta property="og:site_name" content="Pratyush Jaiswal Portfolio" />
     <meta property="og:locale" content="en_IN" />
 
@@ -42,10 +42,10 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@pratyushjaiswal" />
     <meta name="twitter:creator" content="@pratyushjaiswal" />
-    <meta name="twitter:title" content="Pratyush Jaiswal | Software Developer & CS Student Portfolio" />
-    <meta name="twitter:description" content="Pratyush Jaiswal — CS student at RVITM Bangalore, building full-stack web apps and gamified platforms." />
+    <meta name="twitter:title" content="Pratyush Jaiswal — Frontend Developer" />
+    <meta name="twitter:description" content="Frontend developer in Bengaluru building fast, expressive web interfaces." />
     <meta name="twitter:image" content="https://pratyushjaiswal.vercel.app/og-image.png" />
-    <meta name="twitter:image:alt" content="Pratyush Jaiswal – Software Developer Portfolio" />
+    <meta name="twitter:image:alt" content="Pratyush Jaiswal — Frontend Developer" />
 
     <!-- ═══════════════════════════════════════════════
          JSON-LD STRUCTURED DATA (Person Schema)
@@ -59,8 +59,8 @@
       "name": "Pratyush Jaiswal",
       "givenName": "Pratyush",
       "familyName": "Jaiswal",
-      "jobTitle": "Software Developer",
-      "description": "Computer Science student at RVITM Bangalore. Building full-stack web applications, gamified platforms, and interactive interfaces with React, TypeScript, and Supabase.",
+      "jobTitle": "Frontend Developer",
+      "description": "Frontend developer and Computer Science student at RVITM Bengaluru, building fast, expressive web interfaces with React, TypeScript, Next.js and motion.",
       "url": "https://pratyushjaiswal.vercel.app/",
       "image": "https://pratyushjaiswal.vercel.app/og-image.png",
       "email": "pratyushjaiswal0806@gmail.com",
@@ -83,16 +83,16 @@
         }
       },
       "knowsAbout": [
-        "Web Development",
+        "Frontend Development",
         "React.js",
         "TypeScript",
         "Next.js",
-        "Python",
-        "Data Structures and Algorithms",
-        "Full Stack Development",
+        "Tailwind CSS",
+        "Framer Motion",
+        "Web Animation",
+        "UI Engineering",
         "Supabase",
-        "UI/UX Design",
-        "Framer Motion"
+        "Web Performance"
       ],
       "sameAs": [
         "https://github.com/pratyushjaiswal0806-dot",
@@ -111,7 +111,6 @@
     ═══════════════════════════════════════════════ -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="dns-prefetch" href="https://esm.sh" />
 
     <!-- ═══════════════════════════════════════════════
          FONTS — display=swap prevents FOIT (Flash of
@@ -122,44 +121,19 @@
     <!-- ═══════════════════════════════════════════════
          FAVICON & THEME
     ═══════════════════════════════════════════════ -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#0B0D10" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
+    <!-- Paint the canvas colour before the CSS bundle arrives -->
     <style>
-      body {
-        background-color: #0B0D10;
-        color: #EAEAF0;
-        font-family: 'DM Sans', sans-serif;
-        overflow-x: hidden;
-      }
-      @media (pointer: fine) {
-        body {
-          cursor: none;
-        }
-      }
-      @media (pointer: coarse), (hover: none) {
-        body {
-          cursor: auto !important;
-        }
-      }
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Space Grotesk', sans-serif;
-      }
-      ::-webkit-scrollbar { width: 8px; }
-      ::-webkit-scrollbar-track { background: #0B0D10; }
-      ::-webkit-scrollbar-thumb { background: #141821; border-radius: 4px; }
-      ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
-
+      html, body { background-color: #0B0D10; color: #EAEAF0; }
     </style>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/index.css" />
   </head>
   <body>
-    <!-- Semantic landmark for screen readers & crawlers -->
-    <div id="root" role="main" aria-label="Pratyush Jaiswal Portfolio"></div>
+    <div id="root"></div>
 
     <script type="module" src="/index.tsx"></script>
   </body>

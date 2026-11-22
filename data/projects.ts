@@ -1,4 +1,5 @@
 import type { Project, ProjectKind } from '../types';
+import { robofiestaAnalytics } from './analytics';
 
 /* Copy is first person. Lines marked TODO(pj) are drafts written from the
    live sites and need Pratyush's confirmation before they're final. */
@@ -13,6 +14,7 @@ export const projects: Project[] = [
     year: '2026',
     role: 'Solo: design & frontend',
     featured: true,
+    theme: 'pixel',
     accent: { base: '#9BE7FF', glow: '#6C2BD9' },
     links: { live: 'https://robofiesta26.vercel.app/' },
     cover: { src: '/work/robofiesta-26/cover.webp', alt: "RoboFiesta'26 homepage: pixel-art logo, a robot mascot and a full moon on a purple night sky" },
@@ -60,6 +62,7 @@ export const projects: Project[] = [
       { label: 'Prize pool', value: '₹1L+' },
       { label: 'Fest days', value: '2' },
     ],
+    analytics: robofiestaAnalytics,
   },
   {
     slug: 'pegasus',
@@ -70,6 +73,7 @@ export const projects: Project[] = [
     year: '2026',
     role: 'Solo: design & frontend',
     featured: true,
+    theme: 'folk',
     accent: { base: '#FFC21A', glow: '#C4145A' },
     links: { live: 'https://pegasus-six-olive.vercel.app/' },
     cover: { src: '/work/pegasus/cover.webp', alt: 'Pegasus homepage: a marigold wordmark and an illustrated flying horse with a code-bracket saddle on rani pink' },
